@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct EditorView: View {
-    let store: DocumentStore
+    let document: OpenDocument
 
     var body: some View {
         TextEditor(text: Binding(
-            get: { store.markdownText },
-            set: { store.updateText($0) }
+            get: { document.text },
+            set: { document.text = $0 }
         ))
         .font(.system(.body, design: .monospaced))
         .scrollContentBackground(.hidden)

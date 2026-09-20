@@ -5,17 +5,6 @@ struct SidebarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Label(store.folderRoot?.lastPathComponent ?? "文件夹", systemImage: "folder")
-                    .font(.headline)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Spacer()
-            }
-            .padding(12)
-
-            Divider().opacity(0.2)
-
             if let root = store.folderTree, let children = root.children, !children.isEmpty {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 1) {
@@ -88,7 +77,7 @@ struct SidebarRow: View {
         }
         .padding(.vertical, 3)
         .padding(.horizontal, 5)
-        .background(store.selectedURL == node.url ? Color.accentColor.opacity(0.22) : Color.clear)
+        .background(store.selectedURL == node.url.standardizedFileURL.resolvingSymlinksInPath() ? Color.accentColor.opacity(0.22) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .contentShape(Rectangle())
     }

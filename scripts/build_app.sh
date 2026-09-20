@@ -40,8 +40,8 @@ cat > "$DIST/Contents/Info.plist" <<'PLIST'
   <key>CFBundleIdentifier</key><string>com.tony.markdown</string>
   <key>CFBundleExecutable</key><string>Markdown</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>1.0.1</string>
-  <key>CFBundleVersion</key><string>2</string>
+  <key>CFBundleShortVersionString</key><string>1.1.0</string>
+  <key>CFBundleVersion</key><string>3</string>
   <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>

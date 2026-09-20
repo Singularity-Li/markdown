@@ -5,13 +5,13 @@ enum OpenPanelHelper {
     static func openPanel() {
         let panel = NSOpenPanel()
         panel.title = "打开文件或文件夹"
-        panel.message = "选择 Markdown 文件直接阅读，或选择文件夹浏览其中的文档"
+        panel.message = "可多选 Markdown 文件在标签页中打开，或选择文件夹浏览"
         panel.prompt = "打开"
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        if panel.runModal() == .OK, let url = panel.url {
-            DocumentStore.shared.handleOpen(url)
+        panel.allowsMultipleSelection = true
+        if panel.runModal() == .OK {
+            DocumentStore.shared.handleOpen(panel.urls)
         }
     }
 }

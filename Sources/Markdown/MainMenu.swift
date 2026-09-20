@@ -4,6 +4,10 @@ import AppKit
 @objc final class MenuRouter: NSObject {
     static let shared = MenuRouter()
     @objc func openFile() { OpenPanelHelper.openPanel() }
+    @objc func closeTab() {
+        if let id = DocumentStore.shared.activeID { DocumentStore.shared.close(id) }
+        else { NSApp.keyWindow?.performClose(nil) }
+    }
     @objc func save() { _ = DocumentStore.shared.save() }
     @objc func toggleMode() { DocumentStore.shared.isPreviewMode.toggle() }
 }
@@ -34,6 +38,7 @@ enum MainMenu {
         let fileMenu = NSMenu(title: "文件")
         fileItem.submenu = fileMenu
         fileMenu.addItem(action(#selector(MenuRouter.openFile), title: "打开…", key: "o", modifiers: .command))
+        fileMenu.addItem(action(#selector(MenuRouter.closeTab), title: "关闭标签页", key: "w", modifiers: .command))
         fileMenu.addItem(.separator())
         fileMenu.addItem(action(#selector(MenuRouter.save), title: "保存", key: "s", modifiers: .command))
 

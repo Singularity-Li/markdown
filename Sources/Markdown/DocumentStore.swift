@@ -1,83 +1,103 @@
 import Foundation
 import Observation
 
-/// 应用全局文档状态（单窗口个人应用，使用单例）。
+/// 每个标签独立拥有正文、保存基线和阅读模式。
+@Observable
+final class OpenDocument: Identifiable {
+    let url: URL
+    var id: URL { url }
+    var text: String
+    var savedText: String
+    let isSupported: Bool
+    var isPreviewMode = true
+    var isDirty: Bool { isSupported && text != savedText }
+
+    init(url: URL, text: String, isSupported: Bool = true) {
+        self.url = url
+        self.isSupported = isSupported
+        self.text = text
+        self.savedText = text
+    }
+}
+
+enum CloseDecision { case save, discard, cancel }
+
 @Observable
 final class DocumentStore {
     static let shared = DocumentStore()
 
-    /// 所有替换文档的入口共享同一未保存确认。
-    var confirmReplacement: (() -> Bool)?
+    private(set) var documents: [OpenDocument] = []
+    private(set) var activeID: URL?
+    var confirmClose: ((OpenDocument) -> CloseDecision)?
     var errorMessage: String?
-    private var savedText = ""
-
-    /// 当前已加载的 Markdown 文件 URL（仅加载 .md 时才非 nil）。
-    var currentURL: URL?
-    /// 当前正文内容。
-    var markdownText: String = ""
-    /// 是否存在未保存的编辑。
-    var isDirty: Bool = false
-    /// true = 预览，false = 编辑。
-    var isPreviewMode: Bool = true
     var showsSidebar = false
-    /// 窗口内拖拽悬停状态（用于高亮提示）。
-    var isDropTargeted: Bool = false
-
-    /// 文件夹模式：当前打开目录的根。
+    var showsAppearancePopover = false
+    var isDropTargeted = false
     var folderRoot: URL?
-    /// 文件夹模式：整棵目录树。
     var folderTree: FileNode?
-    /// 当前在侧栏选中的节点 URL（用于高亮，包括非 md 文件）。
-    var selectedURL: URL?
 
-    /// 顶部标题。
-    var displayTitle: String {
-        if let url = currentURL {
-            return url.lastPathComponent
+    var activeDocument: OpenDocument? { documents.first { $0.id == activeID } }
+    var currentURL: URL? { activeDocument?.url }
+    var selectedURL: URL? { currentURL }
+    var markdownText: String { activeDocument?.text ?? "" }
+    var isDirty: Bool { activeDocument?.isDirty ?? false }
+    var isPreviewMode: Bool {
+        get { activeDocument?.isPreviewMode ?? true }
+        set {
+            guard let document = activeDocument, document.isSupported else { return }
+            document.isPreviewMode = newValue
         }
-        if let folder = folderRoot {
-            return folder.lastPathComponent
+    }
+    var displayTitle: String { currentURL?.lastPathComponent ?? folderRoot?.lastPathComponent ?? "Markdown" }
+    var hasLoadedDocument: Bool { activeDocument != nil }
+
+    func handleOpen(_ url: URL) { handleOpen([url]) }
+
+    /// 文件多选、Finder、拖放共用此入口；混选时先设置目录，再打开文件。
+    func handleOpen(_ urls: [URL]) {
+        var folders: [URL] = []
+        var files: [URL] = []
+        for url in urls {
+            var isDirectory: ObjCBool = false
+            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue {
+                folders.append(url)
+            } else {
+                files.append(url)
+            }
         }
-        return "Markdown"
-    }
-
-    /// 是否有真正加载进来的 Markdown 内容（用于判断展示编辑/预览 vs 占位）。
-    var hasLoadedDocument: Bool {
-        currentURL != nil
-    }
-
-    // MARK: - 打开
-
-    /// 根据 URL 区分目录 / 文件，统一入口（菜单、拖拽、Dock 打开都会走这里）。
-    func handleOpen(_ url: URL) {
-        NSLog("[Markdown] handleOpen: %@", url.path)
-        var isDir: ObjCBool = false
-        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
-            openFolder(url)
-        } else if openFile(url) {
+        for folder in folders { openFolder(folder) }
+        var openedFile = false
+        for file in files { if openFile(file) { openedFile = true } }
+        if folders.isEmpty && openedFile {
             folderRoot = nil
             folderTree = nil
             showsSidebar = false
         }
     }
 
-    /// 打开单个文件：仅 .md / .markdown / .mkd / .mdown 会加载，其它保持右侧空白。
     @discardableResult
     func openFile(_ url: URL) -> Bool {
-        guard isMarkdown(url) else {
-            errorMessage = "不支持“\(url.lastPathComponent)”。请选择 Markdown 文件。"
-            return false
+        let canonical = url.standardizedFileURL.resolvingSymlinksInPath()
+        if let document = documents.first(where: { $0.id == canonical }) {
+            activate(document.id)
+            return true
+        }
+        guard ["md", "markdown", "mkd", "mdown"].contains(url.pathExtension.lowercased()) else {
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: canonical.path, isDirectory: &isDirectory), !isDirectory.boolValue else {
+                errorMessage = "无法打开“\(url.lastPathComponent)”：文件不存在。"
+                return false
+            }
+            let document = OpenDocument(url: canonical, text: "", isSupported: false)
+            documents.append(document)
+            activate(document.id)
+            return true
         }
         do {
-            var text = try String(contentsOf: url, encoding: .utf8)
-            let wasDirty = isDirty
-            guard !isDirty || confirmReplacement?() == true else { return false }
-            if wasDirty { text = try String(contentsOf: url, encoding: .utf8) }
-            markdownText = text
-            savedText = text
-            currentURL = url
-            selectedURL = url
-            isDirty = false
+            let text = try String(contentsOf: canonical, encoding: .utf8)
+            let document = OpenDocument(url: canonical, text: text)
+            documents.append(document)
+            activate(document.id)
             return true
         } catch {
             errorMessage = "无法打开“\(url.lastPathComponent)”：\(error.localizedDescription)"
@@ -86,7 +106,6 @@ final class DocumentStore {
     }
 
     func openFolder(_ url: URL) {
-        guard !isDirty || confirmReplacement?() == true else { return }
         guard let tree = FileNode.scan(url) else {
             errorMessage = "无法读取文件夹“\(url.lastPathComponent)”。"
             return
@@ -94,11 +113,7 @@ final class DocumentStore {
         folderRoot = url
         folderTree = tree
         showsSidebar = true
-        currentURL = nil
-        markdownText = ""
-        savedText = ""
-        isDirty = false
-        selectedURL = nil
+        // 打开目录只改变导航，不关闭任何已打开的标签。
     }
 
     func select(_ node: FileNode) {
@@ -106,33 +121,60 @@ final class DocumentStore {
         openFile(node.url)
     }
 
-    func updateText(_ text: String) {
-        markdownText = text
-        isDirty = currentURL != nil && text != savedText
+    func activate(_ id: URL) {
+        guard documents.contains(where: { $0.id == id }) else { return }
+        activeID = id
     }
 
-    // MARK: - 保存
+    func updateText(_ text: String) {
+        guard let document = activeDocument, document.isSupported else { return }
+        document.text = text
+    }
 
     @discardableResult
     func save() -> Bool {
-        guard let url = currentURL else { return false }
+        guard let document = activeDocument else { return false }
+        return save(document)
+    }
+
+    @discardableResult
+    func save(_ document: OpenDocument) -> Bool {
+        guard document.isSupported else { return false }
         do {
-            try markdownText.write(to: url, atomically: true, encoding: .utf8)
-            savedText = markdownText
-            isDirty = false
+            try document.text.write(to: document.url, atomically: true, encoding: .utf8)
+            document.savedText = document.text
             return true
         } catch {
-            errorMessage = "保存失败：\(error.localizedDescription)"
+            errorMessage = "无法保存“\(document.url.lastPathComponent)”：\(error.localizedDescription)"
             return false
         }
     }
 
-    // MARK: - 私有
+    @discardableResult
+    func close(_ id: URL) -> Bool {
+        guard let index = documents.firstIndex(where: { $0.id == id }),
+              mayClose(documents[index]) else { return false }
+        documents.remove(at: index)
+        if activeID == id {
+            activeID = documents.isEmpty ? nil : documents[min(index, documents.count - 1)].id
+        }
+        return true
+    }
 
-    private func isMarkdown(_ url: URL) -> Bool {
-        switch url.pathExtension.lowercased() {
-        case "md", "markdown", "mkd", "mdown": return true
-        default: return false
+    /// 逐一检查所有脏标签，包括后台标签。取消时不丢弃任何尚未保存的正文。
+    func canCloseAll() -> Bool {
+        for document in documents where document.isDirty {
+            if !mayClose(document) { return false }
+        }
+        return true
+    }
+
+    private func mayClose(_ document: OpenDocument) -> Bool {
+        guard document.isDirty else { return true }
+        switch confirmClose?(document) ?? .cancel {
+        case .save: return save(document)
+        case .discard: return true
+        case .cancel: return false
         }
     }
 }

@@ -4,10 +4,12 @@ import SwiftUI
 /// 应用与窗口生命周期代理（手动实例化，见 main.swift）。
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var window: NSWindow?
+    private let appearance = AppearanceSettings.shared
+    private var didApproveWindowClose = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
-        DocumentStore.shared.confirmReplacement = { [weak self] in self?.confirmDiscardOrSave() ?? false }
+        DocumentStore.shared.confirmClose = { [weak self] document in self?.closeDecision(for: document) ?? .cancel }
         buildWindow()
         NSApp.activate()
     }
@@ -15,27 +17,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        confirmDiscardOrSave() ? .terminateNow : .terminateCancel
+        (didApproveWindowClose || DocumentStore.shared.canCloseAll()) ? .terminateNow : .terminateCancel
     }
 
     // 双击文件 / 拖到 Dock 图标 / `open -a Markdown <路径>` 都会触发（odoc 事件）。
     func application(_ application: NSApplication, openFiles filenames: [String]) {
-        for name in filenames {
-            DocumentStore.shared.handleOpen(URL(fileURLWithPath: name))
-        }
+        DocumentStore.shared.handleOpen(filenames.map { URL(fileURLWithPath: $0) })
         application.reply(toOpenOrPrint: .success)
     }
 
     // 部分场景会走 URL 形式。
     func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls { DocumentStore.shared.handleOpen(url) }
+        DocumentStore.shared.handleOpen(urls)
     }
 
     // 点红色关闭按钮时，若有未保存内容则先提醒。
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        guard confirmDiscardOrSave() else { return false }
+        guard DocumentStore.shared.canCloseAll() else { return false }
         // 关闭最后窗口随后触发退出，避免重复询问。
-        DocumentStore.shared.isDirty = false
+        didApproveWindowClose = true
         return true
     }
 
@@ -67,40 +67,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         backdrop.material = .underWindowBackground
         backdrop.blendingMode = .behindWindow
         backdrop.state = .active
-        glass.translatesAutoresizingMaskIntoConstraints = false
-        backdrop.addSubview(glass)
-        NSLayoutConstraint.activate([
-            glass.leadingAnchor.constraint(equalTo: backdrop.leadingAnchor),
-            glass.trailingAnchor.constraint(equalTo: backdrop.trailingAnchor),
-            glass.topAnchor.constraint(equalTo: backdrop.topAnchor),
-            glass.bottomAnchor.constraint(equalTo: backdrop.bottomAnchor)
-        ])
-        win.contentView = backdrop
+        // 模糊层与玻璃内容是同级视图，调节背景不会淡化文字或按钮。
+        let container = NSView()
+        for view in [backdrop, glass] {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(view)
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+                view.topAnchor.constraint(equalTo: container.topAnchor),
+                view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+            ])
+        }
+        win.contentView = container
+        appearance.onChange = { [weak win, weak backdrop, weak glass] value in
+            win?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(1 - value)
+            backdrop?.alphaValue = 1 - value * 0.85
+            glass?.tintColor = NSColor.windowBackgroundColor.withAlphaComponent((1 - value) * 0.12)
+        }
+        appearance.onChange?(appearance.transparency)
 
         win.center()
         win.makeKeyAndOrderFront(nil)
         window = win
     }
 
-    private func confirmDiscardOrSave() -> Bool {
-        let store = DocumentStore.shared
-        guard store.isDirty else { return true }
-
+    private func closeDecision(for document: OpenDocument) -> CloseDecision {
         let alert = NSAlert()
         alert.messageText = "要保存更改吗？"
-        alert.informativeText = "“\(store.currentURL?.lastPathComponent ?? "未命名")” 有未保存的更改。"
+        alert.informativeText = "“\(document.url.lastPathComponent)” 有未保存的更改。\n\(document.url.deletingLastPathComponent().path)"
         alert.alertStyle = .warning
         alert.addButton(withTitle: "保存")
         alert.addButton(withTitle: "不保存")
         alert.addButton(withTitle: "取消")
-
         switch alert.runModal() {
-        case .alertFirstButtonReturn:
-            return store.save()
-        case .alertSecondButtonReturn:
-            return true
-        default:
-            return false
+        case .alertFirstButtonReturn: return .save
+        case .alertSecondButtonReturn: return .discard
+        default: return .cancel
         }
     }
 }
