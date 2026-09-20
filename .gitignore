@@ -60,3 +60,47 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Intermediate build artifacts and backups (root Markdown.app is committed)
+dist/
+
+.DS_Store
+
+# Local caches, reports, logs and temporary files
+.cache/
+DerivedData/
+.swiftpm/xcode/
+*.xcresult/
+/coverage/
+/test-results/
+/logs/
+/tmp/
+/temp/
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Debug captures and backups (keep necessary images under Resources/)
+/screenshots/
+/artifacts/
+/backups/
+*.bak
+*.orig
+*.app/
+
+# Personal editor settings and local environment files
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+
+# Required deliverable: keep the latest root App in Git
+!/Markdown.app/
+!/Markdown.app/**
+**/.DS_Store
