@@ -44,8 +44,10 @@ enum MarkdownHTML {
                 marked.setOptions({ gfm: true, breaks: false });
                 var el = document.getElementById('content');
                 el.innerHTML = marked.parse(b64ToUtf8(\(b64.jsonQuoted)));
-                var used = new Set();
+                // Preserve authored anchors and reserve their names before generating heading IDs.
+                var used = new Set(Array.from(el.querySelectorAll('[id],a[name]')).map(function (node) { return node.id || node.getAttribute('name'); }));
                 el.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function (heading) {
+                    if (heading.id) return;
                     var slug = heading.textContent.toLowerCase().trim().replace(/[^\\p{L}\\p{N}_\\s-]/gu, '').replace(/\\s/g, '-');
                     var id = slug, n = 1;
                     while (used.has(id)) id = slug + '-' + n++;

@@ -1,6 +1,16 @@
 # Markdown 语法演示
 
-这是一个覆盖全部常用与冷门 Markdown 语法的示例文件。左上角开关可切换「预览 / 编辑」，右上角按钮可打开文件或文件夹。
+这是一个覆盖全部常用与冷门 Markdown 语法的示例文件。右上角开关可切换「预览 / 编辑」，右上角按钮可打开文件或文件夹。
+
+## 中英文切换示例
+
+[中文](#zh) | [English](#en)
+
+<h2 id="zh">中文版</h2>
+
+这是中文内容。点击上方 **English**，会跳转到文末的英文版；在英文版点击 **中文** 可返回这里。
+
+此示例使用 Markdown 链接和 HTML 自定义锚点，可离线使用。
 
 ---
 
@@ -178,3 +188,13 @@ Markdown 会以等宽字体原样展示。
 ---
 
 > **试试看**：切到「编辑」模式随意修改，再切回「预览」观察变化；按 `Cmd + S` 保存；关闭前若未保存会弹出提醒。
+
+---
+
+<h2 id="en">English version</h2>
+
+[中文](#zh) | [English](#en)
+
+This is the English version. Click **中文** to return to the Chinese section near the top.
+
+Language links use explicit HTML anchors and work offline in preview mode.
