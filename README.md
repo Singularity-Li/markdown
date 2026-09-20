@@ -15,7 +15,7 @@ bash scripts/test.sh
 bash scripts/build_app.sh
 ```
 
-构建前退出桌面正在运行的 Markdown。构建脚本生成并签名应用，完整替换仓库根目录的 `Markdown.app`，并同步部署到 `~/Desktop/Markdown.app`，不会覆盖已有示例文件。生成后可双击应用运行。
+构建脚本生成并签名应用，仅完整替换仓库根目录的 `Markdown.app`，不向桌面复制或更新任何文件。生成后可双击仓库中的应用运行。
 
 快捷键：`⌘O` 打开文件或文件夹、`⌘S` 保存当前标签、`⌘W` 关闭当前标签、`⇧⌘P` 切换预览与编辑。
 
@@ -29,7 +29,7 @@ bash scripts/build_app.sh
 
 每次完成开发，先验证并编译最新 App，再将源码与根目录 `Markdown.app` 一起提交、推送到远程。完整规范见 [AGENTS.md](AGENTS.md)。
 
-若桌面 App 正在使用，可运行 `DEPLOY_DESKTOP=0 bash scripts/build_app.sh`，仅更新仓库根目录产物。构建缓存和备份不会纳入 Git。
+开发完成后不再自动更新桌面的 App、示例文件或图片；仅在明确要求时操作桌面文件。构建缓存和备份不会纳入 Git。
 
 每次交付同时维护 `.gitignore`：忽略缓存、日志、临时产物、截图、备份和个人环境文件，保留必要资源、开发文档及根目录 App。
 

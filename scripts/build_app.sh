@@ -1,5 +1,5 @@
 #!/bin/bash
-# 一键构建：生成资源 → 编译 → 组装 → 签名验证 → 更新仓库根目录及桌面 App。
+# 一键构建：生成资源 → 编译 → 组装 → 签名验证 → 更新仓库根目录 App。
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -9,7 +9,6 @@ APP_NAME="Markdown"
 BIN="$ROOT/.build/release/$APP_NAME"
 DIST="$ROOT/dist/$APP_NAME.app"
 REPO_APP="$ROOT/$APP_NAME.app"
-DEPLOY_DESKTOP="${DEPLOY_DESKTOP:-1}"
 
 echo "==> 1/7 生成内嵌资源 (Assets.swift)"
 swift scripts/gen_assets.swift
@@ -90,24 +89,11 @@ echo "==> 6/7 更新仓库根目录 App"
 rm -rf "$REPO_APP"
 ditto "$DIST" "$REPO_APP"
 
-if [ "$DEPLOY_DESKTOP" = "1" ]; then
-  rm -rf "$HOME/Desktop/$APP_NAME.app"
-  ditto "$DIST" "$HOME/Desktop/$APP_NAME.app"
-  # 示例文件可能已被用户编辑，不覆盖已有文件。
-  [ -e "$HOME/Desktop/sample.png" ] || cp "$ROOT/dist/sample.png" "$HOME/Desktop/sample.png"
-  [ -e "$HOME/Desktop/Markdown示例.md" ] || cp "$ROOT/Markdown示例.md" "$HOME/Desktop/Markdown示例.md"
-
-  codesign --verify --deep --strict "$HOME/Desktop/$APP_NAME.app"
-fi
-
 echo "==> 7/7 验证仓库根目录 App"
 codesign --verify --deep --strict "$REPO_APP"
 
 echo ""
 echo "完成。"
 echo "  仓库 App: $REPO_APP"
-if [ "$DEPLOY_DESKTOP" = "1" ]; then
-  echo "  桌面 App: $HOME/Desktop/$APP_NAME.app"
-fi
-echo "  示例:     $HOME/Desktop/Markdown示例.md"
-echo "  示例图片: $HOME/Desktop/sample.png"
+echo "  示例:     $ROOT/Markdown示例.md"
+echo "  示例图片: $ROOT/dist/sample.png"
