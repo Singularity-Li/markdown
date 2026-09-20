@@ -57,7 +57,7 @@ struct WindowToolbarView: View {
                     Slider(value: Binding(
                         get: { appearance.transparency },
                         set: { appearance.transparency = $0 }
-                    ), in: 0...1, step: 0.01)
+                    ), in: 0...1)
                     .accessibilityLabel("窗口背景透明度")
                     .accessibilityValue("\(Int((appearance.transparency * 100).rounded()))%")
                     HStack {
