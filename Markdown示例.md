@@ -150,10 +150,6 @@ Markdown 会以等宽字体原样展示。
 
 ## 8. 图片
 
-### 相对路径图片（与本文件同目录的 sample.png）
-
-![本地示例图片](sample.png)
-
 ### 远程图片（需联网）
 
 ![远程占位图](https://picsum.photos/seed/markdown/640/320)
