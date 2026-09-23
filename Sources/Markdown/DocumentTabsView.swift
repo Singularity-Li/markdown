@@ -20,7 +20,7 @@ struct DocumentTabsView: View {
                                         .truncationMode(.middle)
                                 }
                                 .padding(.leading, 10)
-                                .padding(.vertical, 6)
+                                .frame(height: 28)
                                 .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
@@ -38,6 +38,7 @@ struct DocumentTabsView: View {
                             .help("关闭标签页")
                         }
                         .frame(maxWidth: 240)
+                        .frame(height: 28)
                         .background(document.id == store.activeID ? Color.accentColor.opacity(0.22) : Color.primary.opacity(0.04),
                                     in: RoundedRectangle(cornerRadius: 8))
                         .overlay {
@@ -49,7 +50,7 @@ struct DocumentTabsView: View {
                     }
                 }
                 .padding(.horizontal, 2)
-                .padding(.vertical, 3)
+                .padding(.vertical, 0)
             }
             .onChange(of: store.activeID) { _, id in
                 if let id { proxy.scrollTo(id) }

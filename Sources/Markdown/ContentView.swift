@@ -18,7 +18,7 @@ struct ContentView: View {
                     .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(.top, 2)
+        .ignoresSafeArea(.container, edges: .top)
         .background(Color.clear)
         .onDrop(of: [UTType.fileURL], isTargeted: Binding(
             get: { store.isDropTargeted }, set: { store.isDropTargeted = $0 }

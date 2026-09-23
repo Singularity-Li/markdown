@@ -11,7 +11,7 @@ struct WindowToolbarView: View {
                 Button { store.showsSidebar.toggle() } label: {
                     Image(systemName: "sidebar.left")
                 }
-                .buttonStyle(.glass)
+                .buttonStyle(CompactToolbarButtonStyle())
                 .help(store.showsSidebar ? "收起侧栏" : "展开侧栏")
                 .accessibilityLabel(store.showsSidebar ? "收起侧栏" : "展开侧栏")
 
@@ -35,7 +35,7 @@ struct WindowToolbarView: View {
                     .font(.system(size: 16, weight: .medium))
                     .frame(width: 22, height: 22)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(CompactToolbarButtonStyle())
             .help("新建文件 (⌘N)")
             .accessibilityLabel("新建文件")
 
@@ -44,7 +44,7 @@ struct WindowToolbarView: View {
                     .font(.system(size: 16, weight: .medium))
                     .frame(width: 22, height: 22)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(CompactToolbarButtonStyle())
             .help("打开 Markdown 文件或文件夹 (⌘O)")
             .accessibilityLabel("打开文件或文件夹")
 
@@ -53,7 +53,7 @@ struct WindowToolbarView: View {
                     .font(.system(size: 16, weight: .medium))
                     .frame(width: 22, height: 22)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(CompactToolbarButtonStyle())
             .help("调整 Liquid Glass 透明度")
             .accessibilityLabel("玻璃透明度")
             .popover(isPresented: Binding(
@@ -89,20 +89,43 @@ struct WindowToolbarView: View {
                 .frame(width: 260)
             }
 
-            Toggle(isOn: Binding(
-                get: { store.isPreviewMode }, set: { store.isPreviewMode = $0 }
-            )) {
-                Text(store.isPreviewMode ? "预览" : "编辑")
-                    .fontWeight(.medium)
-                    .foregroundStyle(store.isPreviewMode ? Color.blue : Color.orange)
+            HStack(spacing: 0) {
+                modeButton("编辑", preview: false, color: .orange)
+                modeButton("预览", preview: true, color: .blue)
             }
-            .toggleStyle(.switch)
-            .controlSize(.large)
+            .frame(height: 28)
+            .background(.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
             .disabled(store.activeDocument?.isSupported != true)
-            .tint(.blue)
-            .help(store.isPreviewMode ? "切换到编辑模式" : "切换到预览模式")
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("阅读模式")
         }
         .padding(.horizontal, 14)
-        .frame(height: 40)
+        .padding(.leading, 74)
+        .frame(height: 36)
+    }
+
+    private func modeButton(_ title: String, preview: Bool, color: Color) -> some View {
+        Button { store.isPreviewMode = preview } label: {
+            Text(title)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(store.isPreviewMode == preview ? color : .secondary)
+                .frame(width: 44, height: 28)
+                .background(store.isPreviewMode == preview ? color.opacity(0.15) : .clear,
+                            in: RoundedRectangle(cornerRadius: 8))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(store.isPreviewMode == preview ? .isSelected : [])
+        .help(preview ? "切换到预览模式" : "切换到编辑模式")
+    }
+}
+
+private struct CompactToolbarButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(width: 34, height: 28)
+            .contentShape(Rectangle())
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 8))
+            .opacity(configuration.isPressed ? 0.65 : 1)
     }
 }
