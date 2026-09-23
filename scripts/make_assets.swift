@@ -20,31 +20,10 @@ func renderPNG(size: CGFloat, draw: () -> Void) -> Data {
     return rep.representation(using: .png, properties: [:])!
 }
 
-// A single frosted tile and a bold Markdown monogram, legible at Dock sizes.
+// Native MD lettering on a fully transparent canvas.
 func iconImage(size: CGFloat) -> Data {
     renderPNG(size: size) {
-        let tile = NSBezierPath(roundedRect: NSRect(x: size * 0.08, y: size * 0.08, width: size * 0.84, height: size * 0.84),
-                                xRadius: size * 0.19, yRadius: size * 0.19)
-        NSGraphicsContext.saveGraphicsState()
-        let shadow = NSShadow()
-        shadow.shadowColor = NSColor.black.withAlphaComponent(0.24)
-        shadow.shadowBlurRadius = size * 0.035
-        shadow.shadowOffset = NSSize(width: 0, height: -size * 0.018)
-        shadow.set()
-        NSGradient(colors: [
-            NSColor(calibratedRed: 0.09, green: 0.22, blue: 0.42, alpha: 0.96),
-            NSColor(calibratedRed: 0.18, green: 0.49, blue: 0.68, alpha: 0.91),
-            NSColor(calibratedRed: 0.66, green: 0.88, blue: 0.94, alpha: 0.86)
-        ])!.draw(in: tile, angle: 65)
-        NSGraphicsContext.restoreGraphicsState()
-        NSGraphicsContext.saveGraphicsState()
-        tile.addClip()
-        NSGradient(starting: NSColor.white.withAlphaComponent(0.14), ending: .clear)!
-            .draw(in: NSRect(x: 0, y: size * 0.48, width: size, height: size * 0.44), angle: -90)
-        NSGraphicsContext.restoreGraphicsState()
-        NSColor.white.withAlphaComponent(0.60).setStroke()
-        tile.lineWidth = max(0.6, size * 0.009)
-        tile.stroke()
+        NSGraphicsContext.current!.cgContext.clear(CGRect(x: 0, y: 0, width: size, height: size))
         // Native system lettering, optically centered by its actual glyph bounds.
         let font = NSFont.systemFont(ofSize: size * 0.36, weight: .semibold)
         let lettering = NSAttributedString(string: "MD", attributes: [
