@@ -36,8 +36,28 @@ struct WindowToolbarView: View {
                     .truncationMode(.middle)
             }
             Spacer(minLength: 12)
+            Button { store.newDocument() } label: {
+                Image(systemName: "doc.badge.plus")
+                    .font(.system(size: 16, weight: .medium))
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.glass)
+            .help("新建文件 (⌘N)")
+            .accessibilityLabel("新建文件")
+
+            Button { OpenPanelHelper.openPanel() } label: {
+                Image(systemName: "folder")
+                    .font(.system(size: 16, weight: .medium))
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.glass)
+            .help("打开 Markdown 文件或文件夹 (⌘O)")
+            .accessibilityLabel("打开文件或文件夹")
+
             Button { store.showsAppearancePopover.toggle() } label: {
                 Image(systemName: "circle.lefthalf.filled")
+                    .font(.system(size: 16, weight: .medium))
+                    .frame(width: 22, height: 22)
             }
             .buttonStyle(.glass)
             .help("调整 Liquid Glass 透明度")
@@ -74,20 +94,6 @@ struct WindowToolbarView: View {
                 .padding(18)
                 .frame(width: 260)
             }
-
-            Button { OpenPanelHelper.openPanel() } label: {
-                Label("打开", systemImage: "folder")
-            }
-            .buttonStyle(.glass)
-            .help("打开 Markdown 文件或文件夹 (⌘O)")
-            .accessibilityLabel("打开文件或文件夹")
-
-            Button { store.newDocument() } label: {
-                Image(systemName: "doc.badge.plus")
-            }
-            .buttonStyle(.glass)
-            .help("新建文件 (⌘N)")
-            .accessibilityLabel("新建文件")
 
             Toggle(isOn: Binding(
                 get: { store.isPreviewMode }, set: { store.isPreviewMode = $0 }
