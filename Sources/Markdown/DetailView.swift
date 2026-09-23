@@ -11,12 +11,12 @@ struct DetailView: View {
             if let document = store.activeDocument, document.isSupported {
                 HStack {
                     Spacer()
-                    Text("\(document.characterCount.formatted()) 字符")
+                    Text("\(document.characterCount.formatted()) 字符 · \(document.lineCount.formatted()) 行")
                         .font(.system(size: 11))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
-                        .help("当前文档字符数：不含空白和换行，包含标点及 Markdown 标记")
-                        .accessibilityLabel("当前文档共 \(document.characterCount) 个非空白字符")
+                        .help("当前文档字符数：不含空白和换行，包含标点及 Markdown 标记。行数按文本换行统计，包含末尾空行，不计自动折行；空文档为 1 行。")
+                        .accessibilityLabel("当前文档共 \(document.characterCount) 个非空白字符，\(document.lineCount) 行")
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 22)

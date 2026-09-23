@@ -158,4 +158,11 @@ let counted = OpenDocument(text: "中 文 Hello 👨‍👩‍👧‍👦\n#")
 check(counted.characterCount == 9, "字符统计兼容中英文及组合 emoji，忽略空白")
 counted.text = ""
 check(counted.characterCount == 0, "空文档字符数为零且随编辑更新")
+check(counted.lineCount == 1, "空文档保留一个编辑行")
+counted.text = "第一行\n第二行\n"
+check(counted.lineCount == 3, "换行计数包含末尾空行")
+counted.text = "a\r\nb\rc\nd"
+check(counted.lineCount == 4, "兼容 CRLF、CR 和 LF 且 CRLF 不重复计数")
+counted.text = String(repeating: "很长的段落", count: 100)
+check(counted.lineCount == 1, "自动折行不增加文档行数")
 exit(failures == 0 ? 0 : 1)

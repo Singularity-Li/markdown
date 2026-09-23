@@ -10,6 +10,7 @@ final class OpenDocument: Identifiable {
     var displayName: String { url?.lastPathComponent ?? untitledName }
     var text: String
     var characterCount: Int { text.reduce(0) { $0 + ($1.isWhitespace ? 0 : 1) } }
+    var lineCount: Int { text.reduce(1) { $0 + ($1.isNewline ? 1 : 0) } }
     var savedText: String
     let isSupported: Bool
     var isPreviewMode = true
