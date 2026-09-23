@@ -1,6 +1,7 @@
 // 生成应用图标（iconset）与示例图片 sample.png，供 build_app.sh 使用。
 // 用法：swift scripts/make_assets.swift
 import AppKit
+import CoreText
 
 let fm = FileManager.default
 let dist = URL(fileURLWithPath: "dist", isDirectory: true)
@@ -38,28 +39,25 @@ func iconImage(size: CGFloat) -> Data {
         NSGraphicsContext.restoreGraphicsState()
         NSGraphicsContext.saveGraphicsState()
         tile.addClip()
-        NSGradient(starting: NSColor.white.withAlphaComponent(0.34), ending: .clear)!
+        NSGradient(starting: NSColor.white.withAlphaComponent(0.14), ending: .clear)!
             .draw(in: NSRect(x: 0, y: size * 0.48, width: size, height: size * 0.44), angle: -90)
         NSGraphicsContext.restoreGraphicsState()
         NSColor.white.withAlphaComponent(0.60).setStroke()
         tile.lineWidth = max(0.6, size * 0.009)
         tile.stroke()
-        let mark = NSBezierPath()
-        mark.move(to: NSPoint(x: size * 0.25, y: size * 0.35))
-        mark.line(to: NSPoint(x: size * 0.25, y: size * 0.65))
-        mark.line(to: NSPoint(x: size * 0.40, y: size * 0.47))
-        mark.line(to: NSPoint(x: size * 0.55, y: size * 0.65))
-        mark.line(to: NSPoint(x: size * 0.55, y: size * 0.35))
-        mark.move(to: NSPoint(x: size * 0.73, y: size * 0.64))
-        mark.line(to: NSPoint(x: size * 0.73, y: size * 0.36))
-        mark.move(to: NSPoint(x: size * 0.65, y: size * 0.44))
-        mark.line(to: NSPoint(x: size * 0.73, y: size * 0.36))
-        mark.line(to: NSPoint(x: size * 0.81, y: size * 0.44))
-        mark.lineWidth = size * 0.065
-        mark.lineCapStyle = .round
-        mark.lineJoinStyle = .round
-        NSColor.white.withAlphaComponent(0.94).setStroke()
-        mark.stroke()
+        // Native system lettering, optically centered by its actual glyph bounds.
+        let font = NSFont.systemFont(ofSize: size * 0.36, weight: .semibold)
+        let lettering = NSAttributedString(string: "MD", attributes: [
+            .font: font,
+            .kern: -size * 0.012,
+            .foregroundColor: NSColor.white.withAlphaComponent(0.96)
+        ])
+        let line = CTLineCreateWithAttributedString(lettering)
+        let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
+        let context = NSGraphicsContext.current!.cgContext
+        context.textPosition = CGPoint(x: (size - bounds.width) / 2 - bounds.minX,
+                                       y: (size - bounds.height) / 2 - bounds.minY)
+        CTLineDraw(line, context)
     }
 }
 
