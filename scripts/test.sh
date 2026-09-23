@@ -14,3 +14,8 @@ SYNTAX_TEST_BIN="$(mktemp -t markdown-syntax-tests)"
 trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN"' EXIT
 swiftc Sources/Markdown/MarkdownSyntax.swift Tests/Syntax/main.swift -o "$SYNTAX_TEST_BIN"
 "$SYNTAX_TEST_BIN"
+
+FOCUS_TEST_BIN="$(mktemp -t markdown-focus-tests)"
+trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN"' EXIT
+swiftc Sources/Markdown/FocusedMarkdownWebView.swift Tests/Focus/main.swift -o "$FOCUS_TEST_BIN"
+"$FOCUS_TEST_BIN"

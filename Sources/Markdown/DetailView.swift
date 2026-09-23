@@ -24,8 +24,8 @@ struct DetailView: View {
         }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onChange(of: store.activeID) { _, _ in
-                // 防止切换标签后键盘操作仍落到后台编辑器。
-                if store.activeDocument?.isPreviewMode != false {
+                // 不支持的文件没有正文视图接收焦点，清除后台编辑器焦点。
+                if store.activeDocument?.isSupported != true {
                     NSApp.keyWindow?.makeFirstResponder(nil)
                 }
             }
@@ -56,7 +56,8 @@ struct DetailView: View {
                             .padding(24)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else if document.isPreviewMode {
-                            PreviewView(markdown: document.text, baseURL: document.url?.deletingLastPathComponent())
+                            PreviewView(markdown: document.text, baseURL: document.url?.deletingLastPathComponent(),
+                                        isActive: document.id == store.activeID)
                         } else {
                             EditorView(document: document, isActive: document.id == store.activeID)
                         }

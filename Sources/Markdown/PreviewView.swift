@@ -5,13 +5,14 @@ import WebKit
 struct PreviewView: NSViewRepresentable {
     let markdown: String
     let baseURL: URL?
+    let isActive: Bool
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeNSView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.setURLSchemeHandler(context.coordinator.images, forURLScheme: "md-image")
-        let webView = WKWebView(frame: .zero, configuration: configuration)
+        let webView = FocusedMarkdownWebView(frame: .zero, configuration: configuration)
         webView.setValue(false, forKey: "drawsBackground")
         if #available(macOS 12.0, *) {
             webView.underPageBackgroundColor = .clear
@@ -19,10 +20,12 @@ struct PreviewView: NSViewRepresentable {
         // 关键：禁止 WKWebView 拦截文件拖放（否则拖文件到预览区会被当成网页导航）。
         webView.unregisterDraggedTypes()
         webView.navigationDelegate = context.coordinator
+        webView.setActive(isActive)
         return webView
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        (webView as? FocusedMarkdownWebView)?.setActive(isActive)
         let key = (baseURL?.path ?? "<no-base>") + "\u{0}" + markdown
         guard context.coordinator.key != key else { return }
         context.coordinator.key = key
@@ -54,6 +57,7 @@ struct PreviewView: NSViewRepresentable {
 
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            (webView as? FocusedMarkdownWebView)?.requestContentFocus()
             // 静默诊断：只有渲染结果为空或捕获到 JS 错误时才打日志。
             webView.evaluateJavaScript(
                 "(function(){" +
