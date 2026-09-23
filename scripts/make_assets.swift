@@ -19,41 +19,47 @@ func renderPNG(size: CGFloat, draw: () -> Void) -> Data {
     return rep.representation(using: .png, properties: [:])!
 }
 
-func drawDownArrow(size: CGFloat) {
-    let b = size * 0.5
-    let top = size * 0.30
-    let bottom = size * 0.72
-    let halfWidth = size * 0.20
-    NSColor.white.setStroke()
-    NSColor.white.setFill()
-    // 竖杆
-    let stem = NSBezierPath()
-    stem.move(to: NSPoint(x: b, y: top))
-    stem.line(to: NSPoint(x: b, y: bottom))
-    stem.lineWidth = size * 0.10
-    stem.lineCapStyle = .round
-    stem.stroke()
-    // 箭头三角形
-    let head = NSBezierPath()
-    head.move(to: NSPoint(x: b - halfWidth, y: size * 0.58))
-    head.line(to: NSPoint(x: b, y: size * 0.78))
-    head.line(to: NSPoint(x: b + halfWidth, y: size * 0.58))
-    head.close()
-    head.fill()
-}
-
-// 图标（渐变圆角底 + 白色向下箭头）
+// A single frosted tile and a bold Markdown monogram, legible at Dock sizes.
 func iconImage(size: CGFloat) -> Data {
     renderPNG(size: size) {
-        let rect = NSRect(x: 0, y: 0, width: size, height: size)
-        let path = NSBezierPath(roundedRect: rect.insetBy(dx: size * 0.06, dy: size * 0.06),
-                                xRadius: size * 0.22, yRadius: size * 0.22)
-        let g = NSGradient(colors: [
-            NSColor(calibratedRed: 0.22, green: 0.56, blue: 1.00, alpha: 1),
-            NSColor(calibratedRed: 0.55, green: 0.30, blue: 0.98, alpha: 1)
-        ])!
-        g.draw(in: path, angle: -60)
-        drawDownArrow(size: size)
+        let tile = NSBezierPath(roundedRect: NSRect(x: size * 0.08, y: size * 0.08, width: size * 0.84, height: size * 0.84),
+                                xRadius: size * 0.19, yRadius: size * 0.19)
+        NSGraphicsContext.saveGraphicsState()
+        let shadow = NSShadow()
+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.24)
+        shadow.shadowBlurRadius = size * 0.035
+        shadow.shadowOffset = NSSize(width: 0, height: -size * 0.018)
+        shadow.set()
+        NSGradient(colors: [
+            NSColor(calibratedRed: 0.09, green: 0.22, blue: 0.42, alpha: 0.96),
+            NSColor(calibratedRed: 0.18, green: 0.49, blue: 0.68, alpha: 0.91),
+            NSColor(calibratedRed: 0.66, green: 0.88, blue: 0.94, alpha: 0.86)
+        ])!.draw(in: tile, angle: 65)
+        NSGraphicsContext.restoreGraphicsState()
+        NSGraphicsContext.saveGraphicsState()
+        tile.addClip()
+        NSGradient(starting: NSColor.white.withAlphaComponent(0.34), ending: .clear)!
+            .draw(in: NSRect(x: 0, y: size * 0.48, width: size, height: size * 0.44), angle: -90)
+        NSGraphicsContext.restoreGraphicsState()
+        NSColor.white.withAlphaComponent(0.60).setStroke()
+        tile.lineWidth = max(0.6, size * 0.009)
+        tile.stroke()
+        let mark = NSBezierPath()
+        mark.move(to: NSPoint(x: size * 0.25, y: size * 0.35))
+        mark.line(to: NSPoint(x: size * 0.25, y: size * 0.65))
+        mark.line(to: NSPoint(x: size * 0.40, y: size * 0.47))
+        mark.line(to: NSPoint(x: size * 0.55, y: size * 0.65))
+        mark.line(to: NSPoint(x: size * 0.55, y: size * 0.35))
+        mark.move(to: NSPoint(x: size * 0.73, y: size * 0.64))
+        mark.line(to: NSPoint(x: size * 0.73, y: size * 0.36))
+        mark.move(to: NSPoint(x: size * 0.65, y: size * 0.44))
+        mark.line(to: NSPoint(x: size * 0.73, y: size * 0.36))
+        mark.line(to: NSPoint(x: size * 0.81, y: size * 0.44))
+        mark.lineWidth = size * 0.065
+        mark.lineCapStyle = .round
+        mark.lineJoinStyle = .round
+        NSColor.white.withAlphaComponent(0.94).setStroke()
+        mark.stroke()
     }
 }
 
