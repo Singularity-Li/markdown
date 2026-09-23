@@ -11,6 +11,8 @@ final class PreviewCheck: NSObject, WKNavigationDelegate {
             const content = document.getElementById('content');
             const headings = Array.from(content.querySelectorAll('h2'));
             return [
+                ['宽窗口正文填满可用宽度', Math.abs(content.getBoundingClientRect().width - document.documentElement.clientWidth) < 2],
+                ['预览左右边距保持紧凑', parseFloat(getComputedStyle(content).paddingLeft) <= 18],
                 ['保留中文自定义锚点', headings[0].id === 'zh'],
                 ['保留英文自定义锚点', headings[1].id === 'en'],
                 ['自动标题避开显式 ID', headings[2].id === 'english-1'],
@@ -39,7 +41,7 @@ app.setActivationPolicy(.prohibited)
 let checker = PreviewCheck()
 let configuration = WKWebViewConfiguration()
 configuration.websiteDataStore = .nonPersistent()
-let webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 800, height: 600), configuration: configuration)
+let webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 1400, height: 600), configuration: configuration)
 webView.navigationDelegate = checker
 webView.loadHTMLString(MarkdownHTML.document(markdown: """
 [中文](#zh) | [English](#en)

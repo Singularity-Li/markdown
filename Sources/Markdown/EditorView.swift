@@ -3,6 +3,7 @@ import AppKit
 
 struct EditorView: NSViewRepresentable {
     let document: OpenDocument
+    let isActive: Bool
 
     func makeCoordinator() -> Coordinator { Coordinator(document: document) }
 
@@ -10,7 +11,7 @@ struct EditorView: NSViewRepresentable {
         let scroll = NSScrollView()
         scroll.hasVerticalScroller = true
         scroll.drawsBackground = false
-        let text = NSTextView()
+        let text = FocusedMarkdownTextView()
         text.isRichText = false
         text.allowsUndo = true
         text.drawsBackground = false
@@ -31,11 +32,14 @@ struct EditorView: NSViewRepresentable {
         text.string = document.text
         scroll.documentView = text
         context.coordinator.highlight(text)
+        text.setActive(isActive)
         return scroll
     }
 
     func updateNSView(_ scroll: NSScrollView, context: Context) {
-        guard let text = scroll.documentView as? NSTextView, !text.hasMarkedText() else { return }
+        guard let text = scroll.documentView as? FocusedMarkdownTextView else { return }
+        text.setActive(isActive)
+        guard !text.hasMarkedText() else { return }
         if text.string != document.text {
             text.string = document.text
             context.coordinator.highlight(text)
@@ -62,6 +66,38 @@ struct EditorView: NSViewRepresentable {
             storage.endEditing()
             text.selectedRanges = selections
             text.typingAttributes = [.font: MarkdownSyntax.baseFont, .foregroundColor: NSColor.labelColor]
+        }
+    }
+}
+
+/// Request focus only when an editor becomes active, never on ordinary text updates.
+private final class FocusedMarkdownTextView: NSTextView {
+    private var active = false
+    private var needsEditorFocus = false
+
+    func setActive(_ value: Bool) {
+        guard value != active else { return }
+        active = value
+        needsEditorFocus = value
+        if value {
+            requestEditorFocus()
+        } else if window?.firstResponder === self {
+            window?.makeFirstResponder(nil)
+        }
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        requestEditorFocus()
+    }
+
+    private func requestEditorFocus() {
+        guard active && needsEditorFocus else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.active, self.needsEditorFocus,
+                  let window = self.window,
+                  window.attachedSheet == nil else { return }
+            self.needsEditorFocus = !window.makeFirstResponder(self)
         }
     }
 }

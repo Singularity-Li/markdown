@@ -25,7 +25,9 @@ struct DetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onChange(of: store.activeID) { _, _ in
                 // 防止切换标签后键盘操作仍落到后台编辑器。
-                NSApp.keyWindow?.makeFirstResponder(nil)
+                if store.activeDocument?.isPreviewMode != false {
+                    NSApp.keyWindow?.makeFirstResponder(nil)
+                }
             }
     }
 
@@ -56,7 +58,7 @@ struct DetailView: View {
                         } else if document.isPreviewMode {
                             PreviewView(markdown: document.text, baseURL: document.url?.deletingLastPathComponent())
                         } else {
-                            EditorView(document: document)
+                            EditorView(document: document, isActive: document.id == store.activeID)
                         }
                     }
                     .opacity(document.id == store.activeID ? 1 : 0)

@@ -16,9 +16,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 .markdown-body {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 16px 28px 32px;
+  width: 100%;
+  margin: 0;
+  padding: 16px 18px 32px;
 }
 .markdown-body > :first-child { margin-top: 0; }
 .markdown-body > :last-child { margin-bottom: 0; }
