@@ -20,7 +20,7 @@ struct DocumentTabsView: View {
                                         .truncationMode(.middle)
                                 }
                                 .padding(.leading, 10)
-                                .padding(.vertical, 8)
+                                .padding(.vertical, 6)
                                 .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
@@ -48,8 +48,8 @@ struct DocumentTabsView: View {
                         .id(document.id)
                     }
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 2)
+                .padding(.vertical, 3)
             }
             .onChange(of: store.activeID) { _, id in
                 if let id { proxy.scrollTo(id) }

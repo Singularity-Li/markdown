@@ -7,7 +7,6 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             WindowToolbarView(store: store)
-            if !store.documents.isEmpty { DocumentTabsView(store: store) }
             Divider().opacity(0.2)
             // 分栏仅作用于下方内容，不延伸到公共工具栏和标签栏。
             HSplitView {
@@ -19,7 +18,7 @@ struct ContentView: View {
                     .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(.top, 8)
+        .padding(.top, 2)
         .background(Color.clear)
         .onDrop(of: [UTType.fileURL], isTargeted: Binding(
             get: { store.isDropTargeted }, set: { store.isDropTargeted = $0 }

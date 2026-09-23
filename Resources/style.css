@@ -18,7 +18,7 @@ body {
 .markdown-body {
   max-width: 880px;
   margin: 0 auto;
-  padding: 30px 34px 60px;
+  padding: 16px 28px 32px;
 }
 .markdown-body > :first-child { margin-top: 0; }
 .markdown-body > :last-child { margin-bottom: 0; }

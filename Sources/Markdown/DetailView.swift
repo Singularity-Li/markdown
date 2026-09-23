@@ -5,7 +5,23 @@ struct DetailView: View {
     let store: DocumentStore
 
     var body: some View {
-        content
+        VStack(spacing: 0) {
+            content
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let document = store.activeDocument, document.isSupported {
+                HStack {
+                    Spacer()
+                    Text("\(document.characterCount.formatted()) 字符")
+                        .font(.system(size: 11))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .help("当前文档字符数：不含空白和换行，包含标点及 Markdown 标记")
+                        .accessibilityLabel("当前文档共 \(document.characterCount) 个非空白字符")
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 22)
+            }
+        }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onChange(of: store.activeID) { _, _ in
                 // 防止切换标签后键盘操作仍落到后台编辑器。

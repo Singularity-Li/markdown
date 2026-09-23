@@ -21,21 +21,15 @@ struct WindowToolbarView: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
                         .help(folder.path)
-                    if store.hasLoadedDocument {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
                 }
             }
 
-            if store.hasLoadedDocument || !store.showsSidebar {
-                Label(store.displayTitle + (store.isDirty ? " · 未保存" : ""), systemImage: "doc.text")
-                    .font(.headline)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+            if !store.documents.isEmpty {
+                DocumentTabsView(store: store)
+                    .frame(maxWidth: .infinity)
+            } else {
+                Spacer(minLength: 12)
             }
-            Spacer(minLength: 12)
             Button { store.newDocument() } label: {
                 Image(systemName: "doc.badge.plus")
                     .font(.system(size: 16, weight: .medium))
@@ -109,6 +103,6 @@ struct WindowToolbarView: View {
             .help(store.isPreviewMode ? "切换到编辑模式" : "切换到预览模式")
         }
         .padding(.horizontal, 14)
-        .frame(height: 44)
+        .frame(height: 40)
     }
 }
