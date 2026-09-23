@@ -37,9 +37,15 @@ func iconImage(size: CGFloat) -> Data {
         let line = CTLineCreateWithAttributedString(lettering)
         let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
         let context = NSGraphicsContext.current!.cgContext
-        context.textPosition = CGPoint(x: (size - bounds.width) / 2 - bounds.minX,
-                                       y: (size - bounds.height) / 2 - bounds.minY)
+        // Scale actual glyph bounds to 75% of the canvas width at every resolution.
+        let scale = size * 0.75 / bounds.width
+        context.saveGState()
+        context.translateBy(x: (size - bounds.width * scale) / 2,
+                            y: (size - bounds.height * scale) / 2)
+        context.scaleBy(x: scale, y: scale)
+        context.textPosition = CGPoint(x: -bounds.minX, y: -bounds.minY)
         CTLineDraw(line, context)
+        context.restoreGState()
     }
 }
 
