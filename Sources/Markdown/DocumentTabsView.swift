@@ -15,7 +15,7 @@ struct DocumentTabsView: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: document.isDirty ? "circle.fill" : "doc.text")
                                         .font(.system(size: document.isDirty ? 7 : 11))
-                                    Text(document.url.lastPathComponent)
+                                    Text(document.displayName)
                                         .lineLimit(1)
                                         .truncationMode(.middle)
                                 }
@@ -24,7 +24,7 @@ struct DocumentTabsView: View {
                                 .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel(document.url.lastPathComponent + (document.isDirty ? "，未保存" : ""))
+                            .accessibilityLabel(document.displayName + (document.isDirty ? "，未保存" : ""))
                             .accessibilityAddTraits(document.id == store.activeID ? .isSelected : [])
 
                             Button { store.close(document.id) } label: {
@@ -34,7 +34,7 @@ struct DocumentTabsView: View {
                                     .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("关闭标签：" + document.url.lastPathComponent)
+                            .accessibilityLabel("关闭标签：" + document.displayName)
                             .help("关闭标签页")
                         }
                         .frame(maxWidth: 240)
@@ -44,7 +44,7 @@ struct DocumentTabsView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .strokeBorder(document.id == store.activeID ? Color.accentColor.opacity(0.6) : Color.clear, lineWidth: 1)
                         }
-                        .help(document.url.path)
+                        .help(document.url?.path ?? document.displayName)
                         .id(document.id)
                     }
                 }

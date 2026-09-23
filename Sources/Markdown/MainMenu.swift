@@ -3,6 +3,7 @@ import AppKit
 /// 菜单动作的接收者。
 @objc final class MenuRouter: NSObject {
     static let shared = MenuRouter()
+    @objc func newDocument() { DocumentStore.shared.newDocument() }
     @objc func openFile() { OpenPanelHelper.openPanel() }
     @objc func closeTab() {
         if let id = DocumentStore.shared.activeID { DocumentStore.shared.close(id) }
@@ -37,6 +38,7 @@ enum MainMenu {
         main.addItem(fileItem)
         let fileMenu = NSMenu(title: "文件")
         fileItem.submenu = fileMenu
+        fileMenu.addItem(action(#selector(MenuRouter.newDocument), title: "新建", key: "n", modifiers: .command))
         fileMenu.addItem(action(#selector(MenuRouter.openFile), title: "打开…", key: "o", modifiers: .command))
         fileMenu.addItem(action(#selector(MenuRouter.closeTab), title: "关闭标签页", key: "w", modifiers: .command))
         fileMenu.addItem(.separator())

@@ -55,7 +55,7 @@ check(!store.isDirty, "撤销到保存基线恢复干净状态")
 store.confirmClose = { _ in .cancel }
 check(!store.close(next) && store.documents.count == 2 && store.currentURL == file, "取消关闭后台脏标签保留所有文档及选择")
 var prompted: [URL] = []
-store.confirmClose = { document in prompted.append(document.url); return .cancel }
+store.confirmClose = { document in prompted.append(document.url!); return .cancel }
 check(!store.canCloseAll() && prompted == [next], "退出会检查后台未保存标签")
 store.confirmClose = { _ in .save }
 check(store.close(next) && store.documents.count == 1 && store.currentURL == file, "保存并关闭后台标签不切换当前标签")
@@ -123,4 +123,35 @@ appearance.transparency = -1
 check(appearance.transparency == 0, "透明度下限有效")
 appearance.transparency = .nan
 check(appearance.transparency == AppearanceSettings.defaultTransparency, "异常透明度恢复合理默认值")
+let drafts = DocumentStore()
+let draft = drafts.newDocument()
+let draftID = draft.id
+check(draft.url == nil && !draft.isPreviewMode && drafts.activeID == draftID, "新建无路径标签并自动编辑")
+let secondDraft = drafts.newDocument()
+check(secondDraft.id != draft.id && secondDraft.displayName != draft.displayName, "多份未命名文档有独立身份和名称")
+drafts.activate(draftID)
+drafts.updateText("# 新建内容")
+drafts.chooseSaveURL = { _ in nil }
+check(!drafts.save() && draft.url == nil && draft.isDirty, "取消首次保存保留草稿")
+let destination = root.appendingPathComponent("新文档.md")
+drafts.chooseSaveURL = { _ in destination }
+check(drafts.save() && draft.url == destination && draft.id == draftID && !draft.isDirty, "首次保存绑定路径且保留标签身份")
+let savedDraft = try String(contentsOf: destination, encoding: .utf8)
+check(savedDraft == "# 新建内容", "首次保存写入正文")
+drafts.openFile(destination)
+check(drafts.documents.count == 2 && drafts.activeID == draftID, "重新打开新保存文档复用标签")
+drafts.chooseSaveURL = { _ in fatalError("已有文件不应重复询问路径") }
+drafts.updateText("# 再次保存")
+check(drafts.save(), "已有路径直接保存")
+drafts.activate(secondDraft.id)
+drafts.updateText("保留我的草稿")
+drafts.chooseSaveURL = { _ in destination }
+check(!drafts.save() && secondDraft.url == nil, "阻止覆盖另一已打开标签的文件")
+drafts.chooseSaveURL = { _ in root.appendingPathComponent("不存在/失败.md") }
+check(!drafts.save() && secondDraft.url == nil && secondDraft.isDirty, "首次保存失败保留未命名草稿")
+drafts.confirmClose = { _ in .save }
+drafts.chooseSaveURL = { _ in nil }
+check(!drafts.close(secondDraft.id) && drafts.documents.count == 2, "关闭时取消保存位置保留标签")
+drafts.chooseSaveURL = { _ in root.appendingPathComponent("关闭保存.md") }
+check(drafts.close(secondDraft.id) && drafts.documents.count == 1, "关闭未命名文档可保存后关闭")
 exit(failures == 0 ? 0 : 1)

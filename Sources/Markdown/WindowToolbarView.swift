@@ -82,6 +82,18 @@ struct WindowToolbarView: View {
             .help("打开 Markdown 文件或文件夹 (⌘O)")
             .accessibilityLabel("打开文件或文件夹")
 
+            Menu {
+                Button("新建文件", systemImage: "doc.badge.plus") { store.newDocument() }
+                Button("保存", systemImage: "square.and.arrow.down") { store.save() }
+                    .disabled(store.activeDocument?.isSupported != true)
+            } label: {
+                Image(systemName: "ellipsis")
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+            .help("新建 (⌘N) / 保存 (⌘S)")
+            .accessibilityLabel("文件操作")
+
             Toggle(isOn: Binding(
                 get: { store.isPreviewMode }, set: { store.isPreviewMode = $0 }
             )) {

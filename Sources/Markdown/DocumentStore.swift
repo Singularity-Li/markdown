@@ -4,16 +4,20 @@ import Observation
 /// 每个标签独立拥有正文、保存基线和阅读模式。
 @Observable
 final class OpenDocument: Identifiable {
-    let url: URL
-    var id: URL { url }
+    var url: URL?
+    let id: URL
+    let untitledName: String
+    var displayName: String { url?.lastPathComponent ?? untitledName }
     var text: String
     var savedText: String
     let isSupported: Bool
     var isPreviewMode = true
     var isDirty: Bool { isSupported && text != savedText }
 
-    init(url: URL, text: String, isSupported: Bool = true) {
+    init(url: URL? = nil, text: String, isSupported: Bool = true, untitledName: String = "未命名.md") {
         self.url = url
+        self.id = url ?? URL(string: "untitled://" + UUID().uuidString)!
+        self.untitledName = untitledName
         self.isSupported = isSupported
         self.text = text
         self.savedText = text
@@ -28,6 +32,8 @@ final class DocumentStore {
 
     private(set) var documents: [OpenDocument] = []
     private(set) var activeID: URL?
+    var chooseSaveURL: ((OpenDocument) -> URL?)?
+    private var untitledCount = 0
     var confirmClose: ((OpenDocument) -> CloseDecision)?
     var errorMessage: String?
     var showsSidebar = false
@@ -48,8 +54,19 @@ final class DocumentStore {
             document.isPreviewMode = newValue
         }
     }
-    var displayTitle: String { currentURL?.lastPathComponent ?? folderRoot?.lastPathComponent ?? "Markdown" }
+    var displayTitle: String { activeDocument?.displayName ?? folderRoot?.lastPathComponent ?? "Markdown" }
     var hasLoadedDocument: Bool { activeDocument != nil }
+
+    @discardableResult
+    func newDocument() -> OpenDocument {
+        untitledCount += 1
+        let name = untitledCount == 1 ? "未命名.md" : "未命名 \(untitledCount).md"
+        let document = OpenDocument(text: "", untitledName: name)
+        document.isPreviewMode = false
+        documents.append(document)
+        activate(document.id)
+        return document
+    }
 
     func handleOpen(_ url: URL) { handleOpen([url]) }
 
@@ -78,7 +95,7 @@ final class DocumentStore {
     @discardableResult
     func openFile(_ url: URL) -> Bool {
         let canonical = url.standardizedFileURL.resolvingSymlinksInPath()
-        if let document = documents.first(where: { $0.id == canonical }) {
+        if let document = documents.first(where: { $0.url == canonical }) {
             activate(document.id)
             return true
         }
@@ -140,12 +157,20 @@ final class DocumentStore {
     @discardableResult
     func save(_ document: OpenDocument) -> Bool {
         guard document.isSupported else { return false }
+        guard let destination = document.url ?? chooseSaveURL?(document) else { return false }
+        let canonical = destination.standardizedFileURL.resolvingSymlinksInPath()
+        guard !documents.contains(where: { $0.id != document.id && $0.url == canonical }) else {
+            errorMessage = "“\(canonical.lastPathComponent)” 已在另一标签页打开，请选择其他文件名。"
+            return false
+        }
         do {
-            try document.text.write(to: document.url, atomically: true, encoding: .utf8)
+            try document.text.write(to: canonical, atomically: true, encoding: .utf8)
+            document.url = canonical
+            if let folderRoot { folderTree = FileNode.scan(folderRoot) }
             document.savedText = document.text
             return true
         } catch {
-            errorMessage = "无法保存“\(document.url.lastPathComponent)”：\(error.localizedDescription)"
+            errorMessage = "无法保存“\(document.displayName)”：\(error.localizedDescription)"
             return false
         }
     }

@@ -28,7 +28,7 @@ struct DetailView: View {
                                     .font(.system(size: 42))
                                 Text("暂不支持此文件格式")
                                     .font(.headline)
-                                Text(document.url.lastPathComponent)
+                                Text(document.displayName)
                                     .lineLimit(2)
                                     .truncationMode(.middle)
                                 Text("请选择 .md、.markdown、.mkd 或 .mdown 文件")
@@ -38,7 +38,7 @@ struct DetailView: View {
                             .padding(24)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else if document.isPreviewMode {
-                            PreviewView(markdown: document.text, baseURL: document.url.deletingLastPathComponent())
+                            PreviewView(markdown: document.text, baseURL: document.url?.deletingLastPathComponent())
                         } else {
                             EditorView(document: document)
                         }

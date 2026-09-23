@@ -10,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         DocumentStore.shared.confirmClose = { [weak self] document in self?.closeDecision(for: document) ?? .cancel }
+        DocumentStore.shared.chooseSaveURL = { OpenPanelHelper.savePanel(for: $0) }
         buildWindow()
         NSApp.activate()
     }
@@ -95,7 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func closeDecision(for document: OpenDocument) -> CloseDecision {
         let alert = NSAlert()
         alert.messageText = "要保存更改吗？"
-        alert.informativeText = "“\(document.url.lastPathComponent)” 有未保存的更改。\n\(document.url.deletingLastPathComponent().path)"
+        alert.informativeText = "“\(document.displayName)” 有未保存的更改。\n\(document.url?.deletingLastPathComponent().path ?? "尚未保存到文件")"
         alert.alertStyle = .warning
         alert.addButton(withTitle: "保存")
         alert.addButton(withTitle: "不保存")
