@@ -25,12 +25,15 @@ func iconImage(size: CGFloat) -> Data {
     renderPNG(size: size) {
         NSGraphicsContext.current!.cgContext.clear(CGRect(x: 0, y: 0, width: size, height: size))
         // Native system lettering, optically centered by its actual glyph bounds.
-        let font = NSFont.systemFont(ofSize: size * 0.36, weight: .semibold)
-        let lettering = NSAttributedString(string: "MD", attributes: [
+        let font = NSFont.systemFont(ofSize: size * 0.48, weight: .bold)
+        let lettering = NSMutableAttributedString(string: "MD", attributes: [
             .font: font,
             .kern: -size * 0.012,
-            .foregroundColor: NSColor.white.withAlphaComponent(0.96)
+            .foregroundColor: NSColor(srgbRed: 32.0 / 255, green: 59.0 / 255, blue: 91.0 / 255, alpha: 1)
         ])
+        lettering.addAttribute(.foregroundColor,
+                               value: NSColor(srgbRed: 166.0 / 255, green: 61.0 / 255, blue: 80.0 / 255, alpha: 1),
+                               range: NSRange(location: 1, length: 1))
         let line = CTLineCreateWithAttributedString(lettering)
         let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
         let context = NSGraphicsContext.current!.cgContext
