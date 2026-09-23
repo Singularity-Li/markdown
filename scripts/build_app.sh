@@ -7,16 +7,15 @@ cd "$ROOT"
 
 APP_NAME="Markdown"
 BIN="$ROOT/.build/release/$APP_NAME"
-DIST="$ROOT/dist/$APP_NAME.app"
 REPO_APP="$ROOT/$APP_NAME.app"
 
-echo "==> 1/7 生成内嵌资源 (Assets.swift)"
+echo "==> 1/6 生成内嵌资源 (Assets.swift)"
 swift scripts/gen_assets.swift
 
-echo "==> 2/7 编译 (release, arm64)"
+echo "==> 2/6 编译 (release, arm64)"
 swift build -c release --arch arm64
 
-echo "==> 3/7 生成图标与示例图片"
+echo "==> 3/6 生成图标与示例图片"
 swift scripts/make_assets.swift
 if command -v iconutil >/dev/null 2>&1; then
   iconutil -c icns "$ROOT/dist/Markdown.iconset" -o "$ROOT/dist/Markdown.icns"
@@ -24,12 +23,12 @@ else
   echo "  跳过 icns（无 iconutil）"
 fi
 
-echo "==> 4/7 组装 Markdown.app"
-rm -rf "$DIST"
-mkdir -p "$DIST/Contents/MacOS" "$DIST/Contents/Resources"
-cp "$BIN" "$DIST/Contents/MacOS/$APP_NAME"
+echo "==> 4/6 组装 Markdown.app"
+rm -rf "$REPO_APP"
+mkdir -p "$REPO_APP/Contents/MacOS" "$REPO_APP/Contents/Resources"
+cp "$BIN" "$REPO_APP/Contents/MacOS/$APP_NAME"
 
-cat > "$DIST/Contents/Info.plist" <<'PLIST'
+cat > "$REPO_APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -74,22 +73,17 @@ cat > "$DIST/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
-printf 'APPL????' > "$DIST/Contents/PkgInfo"
+printf 'APPL????' > "$REPO_APP/Contents/PkgInfo"
 
 if [ -f "$ROOT/dist/Markdown.icns" ]; then
-  cp "$ROOT/dist/Markdown.icns" "$DIST/Contents/Resources/AppIcon.icns"
+  cp "$ROOT/dist/Markdown.icns" "$REPO_APP/Contents/Resources/AppIcon.icns"
 fi
 
-echo "==> 5/7 ad-hoc 签名（无需开发者账号）"
-codesign --force --deep -s - "$DIST" 2>/dev/null || codesign --force -s - "$DIST"
+echo "==> 5/6 ad-hoc 签名（无需开发者账号）"
+codesign --force --deep -s - "$REPO_APP" 2>/dev/null || codesign --force -s - "$REPO_APP"
 
-# 验证新产物成功后才替换现有版本，避免残留旧 bundle 文件。
-codesign --verify --deep --strict "$DIST"
-echo "==> 6/7 更新仓库根目录 App"
-rm -rf "$REPO_APP"
-ditto "$DIST" "$REPO_APP"
-
-echo "==> 7/7 验证仓库根目录 App"
+# 直接验证唯一的根目录产物，不在 dist、临时目录或桌面组装 App。
+echo "==> 6/6 验证仓库根目录 App"
 codesign --verify --deep --strict "$REPO_APP"
 
 echo ""
