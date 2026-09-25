@@ -105,12 +105,13 @@ struct WindowToolbarView: View {
     }
 
     private func modeButton(_ title: String, preview: Bool) -> some View {
-        Button { store.isPreviewMode = preview } label: {
+        let color = preview ? AppTheme.secondaryAccent : AppTheme.accent
+        return Button { store.isPreviewMode = preview } label: {
             Text(title)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(store.isPreviewMode == preview ? AppTheme.accent : .secondary)
+                .foregroundStyle(store.isPreviewMode == preview ? color : .secondary)
                 .frame(width: 44, height: 28)
-                .background(store.isPreviewMode == preview ? AppTheme.accent.opacity(0.15) : .clear,
+                .background(store.isPreviewMode == preview ? color.opacity(0.15) : .clear,
                             in: RoundedRectangle(cornerRadius: 8))
                 .contentShape(Rectangle())
         }
