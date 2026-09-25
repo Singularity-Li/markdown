@@ -46,7 +46,9 @@ private struct DocumentTab: View {
     }
 
     private var titleColor: Color { isSelected ? .primary : .secondary }
-    private var iconColor: Color { isSelected ? .accentColor : .secondary }
+    // 与 App 图标中字母 D 使用相同的 sRGB 酒红色（#A63D50）。
+    private var selectionColor: Color { Color(.sRGB, red: 166.0 / 255, green: 61.0 / 255, blue: 80.0 / 255) }
+    private var iconColor: Color { isSelected ? selectionColor : .secondary }
 
     private var tabLabel: some View {
         HStack(spacing: 7) {
@@ -99,13 +101,15 @@ private struct DocumentTab: View {
                                lineWidth: contrast == .increased ? 1 : 0.5)
         }
         .overlay(alignment: .bottom) {
-            // 小面积强调色与浮起的底色共同标识当前标签，不依赖整块蓝色填充。
-            Capsule()
-                .fill(Color.accentColor)
-                .frame(width: 18, height: 2)
+            // 常亮的小光点标识选中态，避免闪烁干扰阅读。
+            Circle()
+                .fill(selectionColor)
+                .frame(width: 4, height: 4)
+                .shadow(color: selectionColor.opacity(0.6), radius: 3)
                 .padding(.bottom, 1)
                 .opacity(isSelected ? 1 : 0)
                 .accessibilityHidden(true)
+                .allowsHitTesting(false)
         }
         .shadow(color: Color.black.opacity(isSelected ? (colorScheme == .dark ? 0.20 : 0.07) : 0),
                 radius: 2, x: 0, y: 1)
