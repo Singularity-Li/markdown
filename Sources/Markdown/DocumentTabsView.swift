@@ -49,8 +49,24 @@ private struct DocumentTab: View {
     // 与 App 图标中字母 D 使用相同的 sRGB 酒红色（#A63D50）。
     private var selectionColor: Color { AppTheme.accent }
 
+    private let indicatorWidth: CGFloat = 10
+    private let indicatorPadding: CGFloat = 4
+    private var starGlow: Color {
+        Color(nsColor: AppTheme.secondaryAccentNSColor.blended(withFraction: 0.65, of: .white)
+              ?? AppTheme.secondaryAccentNSColor)
+    }
+
     private var tabLabel: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: 0) {
+            Circle()
+                .fill(selectionColor)
+                .frame(width: 4, height: 4)
+                .shadow(color: selectionColor.opacity(0.6), radius: 3)
+                .frame(width: indicatorWidth, height: AppTheme.toolbarControlHeight)
+                .padding(.horizontal, indicatorPadding)
+                .opacity(isSelected ? 1 : 0)
+                .accessibilityHidden(true)
+
             Text(document.displayName)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(titleColor)
@@ -58,19 +74,21 @@ private struct DocumentTab: View {
                 .truncationMode(.middle)
             if document.isDirty {
                 Image(systemName: "asterisk")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 7, weight: .bold))
                     .foregroundStyle(AppTheme.secondaryAccent)
-                    .frame(width: 10, height: AppTheme.toolbarControlHeight, alignment: .center)
+                    .shadow(color: starGlow.opacity(colorScheme == .dark ? 0.95 : 0.35), radius: 1)
+                    .shadow(color: starGlow.opacity(colorScheme == .dark ? 0.65 : 0.2), radius: 3)
+                    .frame(width: indicatorWidth, height: AppTheme.toolbarControlHeight, alignment: .center)
+                    .padding(.horizontal, indicatorPadding)
                     .accessibilityHidden(true)
             }
         }
-        .padding(.leading, 18)
         .frame(height: AppTheme.toolbarControlHeight)
         .contentShape(Rectangle())
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 0) {
             Button {
                 store.activate(document.id)
             } label: {
@@ -101,17 +119,6 @@ private struct DocumentTab: View {
         .overlay {
             shape.strokeBorder(Color.primary.opacity(isSelected ? (contrast == .increased ? 0.45 : 0.12) : 0),
                                lineWidth: contrast == .increased ? 1 : 0.5)
-        }
-        .overlay(alignment: .leading) {
-            // 常亮的小光点标识选中态，避免闪烁干扰阅读。
-            Circle()
-                .fill(selectionColor)
-                .frame(width: 4, height: 4)
-                .shadow(color: selectionColor.opacity(0.6), radius: 3)
-                .padding(.leading, 6)
-                .opacity(isSelected ? 1 : 0)
-                .accessibilityHidden(true)
-                .allowsHitTesting(false)
         }
         .shadow(color: Color.black.opacity(isSelected ? (colorScheme == .dark ? 0.20 : 0.07) : 0),
                 radius: 2, x: 0, y: 1)
