@@ -8,7 +8,7 @@
   <key>CFBundleExecutable</key><string>Markdown</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>1.2.4</string>
-  <key>CFBundleVersion</key><string>19</string>
+  <key>CFBundleVersion</key><string>20</string>
   <key>SUFeedURL</key><string>https://github.com/Singularity-Li/markdown/releases/latest/download/appcast.xml</string>
   <key>SUPublicEDKey</key><string>q1Ue7YUYZyS3Xu2uN8HTb2EJ1M3WgZRky/SBb6+9r6s=</string>
   <key>SUEnableAutomaticChecks</key><true/>
@@ -20,7 +20,7 @@
   <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>
-  <key>CFBundleIconFile</key><string>AppIcon-6f47bd5db12cba8e85ac2738a8e0efc43a843e39db2d031cd2d87697bd6c387a</string>
+  <key>CFBundleIconFile</key><string>AppIcon-eb293f7c43b2f89dcac79fcf7c2d45c069977e63c4d94b421d7406c2565b5b7e</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
   <key>LSMultipleInstancesProhibited</key><true/>
   <key>NSHumanReadableCopyright</key><string>仅供个人使用</string>

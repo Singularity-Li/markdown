@@ -3,6 +3,11 @@ import AppKit
 /// 菜单动作的接收者。
 @objc final class MenuRouter: NSObject {
     static let shared = MenuRouter()
+    @objc func showAbout() {
+        var options: [NSApplication.AboutPanelOptionKey: Any] = [:]
+        if let icon = AppIconRefresh.bundledIcon() { options[.applicationIcon] = icon }
+        NSApp.orderFrontStandardAboutPanel(options: options)
+    }
     @objc func newDocument() { DocumentStore.shared.newDocument() }
     @objc func openFile() { OpenPanelHelper.openPanel() }
     @objc func closeTab() {
@@ -24,7 +29,7 @@ enum MainMenu {
         main.addItem(appItem)
         let appMenu = NSMenu()
         appItem.submenu = appMenu
-        appMenu.addItem(NSMenuItem(title: "关于 Markdown", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""))
+        appMenu.addItem(action(#selector(MenuRouter.showAbout), title: "关于 Markdown", key: "", modifiers: []))
         let checkUpdates = NSMenuItem(title: "检查更新…", action: #selector(AppUpdater.checkForUpdates(_:)), keyEquivalent: "")
         checkUpdates.target = AppUpdater.shared
         appMenu.addItem(checkUpdates)

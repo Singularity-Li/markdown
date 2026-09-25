@@ -20,38 +20,10 @@ func renderPNG(size: CGFloat, draw: () -> Void) -> Data {
     return rep.representation(using: .png, properties: [:])!
 }
 
-// 半透明玻璃圆角底与双色 MD 字标；画布四角保持透明。
+// 纯透明背景与双色 MD 字标，不绘制底板、描边或底板阴影。
 func iconImage(size: CGFloat) -> Data {
     renderPNG(size: size) {
         NSGraphicsContext.current!.cgContext.clear(CGRect(x: 0, y: 0, width: size, height: size))
-        let body = NSRect(x: size * 0.075, y: size * 0.075,
-                          width: size * 0.85, height: size * 0.85)
-        let glass = NSBezierPath(roundedRect: body, xRadius: size * 0.19, yRadius: size * 0.19)
-        NSGraphicsContext.saveGraphicsState()
-        let shadow = NSShadow()
-        shadow.shadowColor = NSColor.black.withAlphaComponent(0.18)
-        shadow.shadowBlurRadius = size * 0.025
-        shadow.shadowOffset = NSSize(width: 0, height: -size * 0.012)
-        shadow.set()
-        NSColor(calibratedWhite: 0.88, alpha: 0.42).setFill()
-        glass.fill()
-        NSGraphicsContext.restoreGraphicsState()
-
-        NSGradient(colors: [
-            NSColor(srgbRed: 0.73, green: 0.81, blue: 0.90, alpha: 0.24),
-            NSColor(srgbRed: 0.94, green: 0.97, blue: 1.0, alpha: 0.36),
-            NSColor.white.withAlphaComponent(0.64)
-        ])!.draw(in: glass, angle: 90)
-        // 内外两层细边缘在明暗背景上都保留玻璃轮廓。
-        NSColor(srgbRed: 0.32, green: 0.40, blue: 0.52, alpha: 0.30).setStroke()
-        glass.lineWidth = max(0.6, size * 0.002)
-        glass.stroke()
-        let inner = NSBezierPath(roundedRect: body.insetBy(dx: size * 0.006, dy: size * 0.006),
-                                 xRadius: size * 0.184, yRadius: size * 0.184)
-        NSColor.white.withAlphaComponent(0.72).setStroke()
-        inner.lineWidth = max(0.6, size * 0.003)
-        inner.stroke()
-
         // Native system lettering, optically centered by its actual glyph bounds.
         let font = NSFont.systemFont(ofSize: size * 0.48, weight: .bold)
         let lettering = NSMutableAttributedString(string: "MD", attributes: [
@@ -65,7 +37,7 @@ func iconImage(size: CGFloat) -> Data {
         let line = CTLineCreateWithAttributedString(lettering)
         let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
         let context = NSGraphicsContext.current!.cgContext
-        // 字标留出玻璃底的内边距。
+        // 保留字标四周透明留白，所有尺寸使用同一构图。
         let scale = size * 0.68 / bounds.width
         context.saveGState()
         context.translateBy(x: (size - bounds.width * scale) / 2,

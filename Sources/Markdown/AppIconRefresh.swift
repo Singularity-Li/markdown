@@ -3,12 +3,18 @@ import CoreServices
 
 /// 只更新当前安装包的注册信息，不修改包内容或清理系统缓存。
 enum AppIconRefresh {
+    static func bundledIcon() -> NSImage? {
+        let bundle = Bundle.main
+        guard let name = bundle.object(forInfoDictionaryKey: "CFBundleIconFile") as? String,
+              let url = bundle.url(forResource: name, withExtension: "icns") else { return nil }
+        return NSImage(contentsOf: url)
+    }
+
     static func refresh() {
         let bundle = Bundle.main
         guard bundle.bundleURL.pathExtension == "app",
               let iconName = bundle.object(forInfoDictionaryKey: "CFBundleIconFile") as? String,
-              let iconURL = bundle.url(forResource: iconName, withExtension: "icns"),
-              let image = NSImage(contentsOf: iconURL) else { return }
+              let image = bundledIcon() else { return }
 
         // 直接读取当前包，避免运行中的 Dock 图标沿用系统缓存。
         NSApp.applicationIconImage = image
