@@ -89,12 +89,19 @@ struct WindowToolbarView: View {
                 .frame(width: 260)
             }
 
-            HStack(spacing: 0) {
-                modeButton("编辑", preview: false)
-                modeButton("预览", preview: true)
+            Picker("阅读模式", selection: Binding(
+                get: { store.isPreviewMode },
+                set: { store.isPreviewMode = $0 }
+            )) {
+                Text("编辑").tag(false)
+                Text("预览").tag(true)
             }
-            .frame(height: 28)
-            .background(.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .controlSize(.regular)
+            .tint(store.isPreviewMode ? AppTheme.secondaryAccent : AppTheme.accent)
+            .frame(width: 104)
+            .help("切换编辑或预览模式（⌘⇧P）")
             .disabled(store.activeDocument?.isSupported != true)
             .accessibilityElement(children: .contain)
             .accessibilityLabel("阅读模式")
@@ -104,21 +111,7 @@ struct WindowToolbarView: View {
         .frame(height: 36)
     }
 
-    private func modeButton(_ title: String, preview: Bool) -> some View {
-        let color = preview ? AppTheme.secondaryAccent : AppTheme.accent
-        return Button { store.isPreviewMode = preview } label: {
-            Text(title)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(store.isPreviewMode == preview ? color : .secondary)
-                .frame(width: 44, height: 28)
-                .background(store.isPreviewMode == preview ? color.opacity(0.15) : .clear,
-                            in: RoundedRectangle(cornerRadius: 8))
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(store.isPreviewMode == preview ? .isSelected : [])
-        .help(preview ? "切换到预览模式" : "切换到编辑模式")
-    }
+
 }
 
 private struct CompactToolbarButtonStyle: ButtonStyle {
