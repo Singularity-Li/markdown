@@ -7,8 +7,8 @@
   <key>CFBundleIdentifier</key><string>com.tony.markdown</string>
   <key>CFBundleExecutable</key><string>Markdown</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>1.2.16</string>
-  <key>CFBundleVersion</key><string>45</string>
+  <key>CFBundleShortVersionString</key><string>1.2.17</string>
+  <key>CFBundleVersion</key><string>46</string>
   <key>SUFeedURL</key><string>https://github.com/Singularity-Li/markdown/releases/latest/download/appcast.xml</string>
   <key>SUPublicEDKey</key><string>q1Ue7YUYZyS3Xu2uN8HTb2EJ1M3WgZRky/SBb6+9r6s=</string>
   <key>SUEnableAutomaticChecks</key><true/>
