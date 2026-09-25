@@ -62,3 +62,27 @@ bash scripts/build_app.sh
 打开 Markdown 文件或切换文档后，键盘焦点自动进入正文区域；预览模式可直接用键盘阅读，后台预览加载和普通内容刷新不会抢走焦点。
 
 图标更新：每次构建自动递增构建号，并按图标内容指纹命名资源。启动时直接从当前安装包加载 Dock 图标；首次运行、版本或图标变化、移动安装位置后更新当前 App 的 Launch Services 注册信息，失败则下次启动重试。此机制不修改已签名安装包，也不重启 Finder / Dock 或清空系统缓存。Finder 和未运行时的 Dock 图标仍由 macOS 管理，安装后建议启动新版一次；系统缓存刷新时间无法保证。
+
+## 自动更新
+
+App 启动后在后台检查 GitHub Releases 的正式版本；也可从 macOS 顶部菜单 **Markdown → 检查更新…** 手动检查。有新版时显示版本和更新说明，可安装、稍后提醒或跳过。点击安装后，Sparkle 自动下载、验签并重启；未保存文档仍会提示保存，取消则暂不退出。自动检查联网失败不打断编辑，手动检查会显示结果。
+
+下载与版本清单完全托管于 GitHub，无需独立网站或用户 Token。更新包与清单均经过 Ed25519 签名，支持 macOS 26+ / Apple Silicon。首次需要手动安装带更新功能的版本。当前 App 使用 ad-hoc 签名，更新签名不等同于 Apple Developer ID 签名或公证。
+
+## 发布新版本
+
+直接对本工程 Agent 说 **“发布新版本”**，或 **“发布 1.3.0，更新说明是……”**。Agent 会按 AGENTS.md 审查改动，完成测试、构建、签名、提交推送、草稿附件校验及正式 Release 发布。
+
+```sh
+# 默认递增补丁版本（首次使用 VERSION 中的版本）
+python3 scripts/release.py
+# 指定版本和更新说明
+python3 scripts/release.py --version 1.3.0 --notes-file dist/release-notes.md
+# 仅准备，或恢复同一次未完成的发布
+python3 scripts/release.py --prepare-only
+python3 scripts/release.py --resume v1.3.0
+```
+
+发布需要已登录且有仓库写权限的 GitHub CLI、可访问的 GitHub 网络及本机钥匙串中的更新签名密钥。脚本先验证草稿附件，再将 Release 设为 latest，最后匿名下载复验；网络失败可恢复，不覆盖已发布内容。普通提交不会触发更新。
+
+构建版本由根目录 VERSION 管理。Sparkle 依赖固定为 2.10.0，Package.resolved 一同追踪。私钥保存在登录钥匙串（账户 `com.tony.markdown`），不得提交；换发布电脑须安全迁移原密钥。安装器运行时允许在用户缓存中暂存新包，但开发构建仍只生成根目录 Markdown.app。

@@ -8,14 +8,34 @@
 		<data>
 		WnfmQ+xj08kaNmNRmBNtDky7AdM=
 		</data>
+		<key>Resources/Sparkle-LICENSE.txt</key>
+		<data>
+		mOjbjtiy4MLeRUA1svgpagNeQGQ=
+		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Frameworks/Sparkle.framework</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			9d0uz1W95u6PxBFxek+RKh2OpAM=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"f5dd2ecf55bde6ee8fc411717a4f912a1d8ea403" or cdhash H"5310630c28d4d1d98aebbe9805df28d52f497255"</string>
+		</dict>
 		<key>Resources/AppIcon-6f47bd5db12cba8e85ac2738a8e0efc43a843e39db2d031cd2d87697bd6c387a.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			b0e9XbEsuo6FrCc4qODvxDqEPjnbLQMc0th2l71sOHo=
+			</data>
+		</dict>
+		<key>Resources/Sparkle-LICENSE.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			OJpOTpoy8Fl3WxOgbiWlkURboinSg40m3T58DEUSfP4=
 			</data>
 		</dict>
 	</dict>

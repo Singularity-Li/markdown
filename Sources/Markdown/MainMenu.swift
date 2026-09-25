@@ -25,6 +25,9 @@ enum MainMenu {
         let appMenu = NSMenu()
         appItem.submenu = appMenu
         appMenu.addItem(NSMenuItem(title: "关于 Markdown", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""))
+        let checkUpdates = NSMenuItem(title: "检查更新…", action: #selector(AppUpdater.checkForUpdates(_:)), keyEquivalent: "")
+        checkUpdates.target = AppUpdater.shared
+        appMenu.addItem(checkUpdates)
         appMenu.addItem(.separator())
         appMenu.addItem(NSMenuItem(title: "隐藏 Markdown", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h"))
         let hideOthers = NSMenuItem(title: "隐藏其他", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h")

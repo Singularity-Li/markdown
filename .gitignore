@@ -104,3 +104,7 @@ DerivedData/
 !/Markdown.app/
 !/Markdown.app/**
 **/.DS_Store
+
+# Python release tooling caches
+__pycache__/
+*.pyc

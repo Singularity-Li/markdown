@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         DocumentStore.shared.chooseSaveURL = { OpenPanelHelper.savePanel(for: $0) }
         buildWindow()
         NSApp.activate()
+        AppUpdater.shared.start()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }

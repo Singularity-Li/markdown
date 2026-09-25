@@ -11,13 +11,26 @@ REPO_APP="$ROOT/$APP_NAME.app"
 # 在替换旧包前读取构建号，每次构建递增（首次构建从旧版 3 继续）。
 PREVIOUS_BUILD=3
 if [ -f "$REPO_APP/Contents/Info.plist" ]; then
-  PREVIOUS_BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$REPO_APP/Contents/Info.plist")
+  if ! PREVIOUS_BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$REPO_APP/Contents/Info.plist"); then
+    # 发布恢复已经保存了递增构建号；允许重做中断后不完整的包。
+    [ -n "${RELEASE_BUILD_NUMBER:-}" ] || exit 1
+    PREVIOUS_BUILD=3
+  fi
 fi
 if ! [[ "$PREVIOUS_BUILD" =~ ^[0-9]+$ ]]; then
   echo "无效的旧构建号：$PREVIOUS_BUILD" >&2
   exit 1
 fi
 BUILD_NUMBER=$((10#$PREVIOUS_BUILD + 1))
+# 发布前可根据 GitHub 最新版提高构建号；只允许递增。
+if [ -n "${RELEASE_BUILD_NUMBER:-}" ]; then
+  [[ "$RELEASE_BUILD_NUMBER" =~ ^[0-9]+$ ]] && [ "$RELEASE_BUILD_NUMBER" -gt "$PREVIOUS_BUILD" ] || exit 1
+  BUILD_NUMBER="$RELEASE_BUILD_NUMBER"
+fi
+APP_VERSION=$(cat VERSION)
+[[ "$APP_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "VERSION 格式错误" >&2; exit 1; }
+UPDATE_PUBLIC_KEY=$(cat Resources/UpdatePublicKey.txt)
+SPARKLE_ROOT="$ROOT/.build/artifacts/sparkle/Sparkle"
 
 echo "==> 1/6 生成内嵌资源 (Assets.swift)"
 swift scripts/gen_assets.swift
@@ -34,8 +47,14 @@ ICON_NAME="AppIcon-$ICON_HASH"
 
 echo "==> 4/6 组装 Markdown.app"
 rm -rf "$REPO_APP"
-mkdir -p "$REPO_APP/Contents/MacOS" "$REPO_APP/Contents/Resources"
+mkdir -p "$REPO_APP/Contents/MacOS" "$REPO_APP/Contents/Resources" "$REPO_APP/Contents/Frameworks"
 cp "$BIN" "$REPO_APP/Contents/MacOS/$APP_NAME"
+ditto "$SPARKLE_ROOT/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework" "$REPO_APP/Contents/Frameworks/Sparkle.framework"
+# 交付包仅保留运行组件，开发头文件仍留在 SPM 缓存中。
+for PART in Headers PrivateHeaders Modules; do
+  rm -rf "$REPO_APP/Contents/Frameworks/Sparkle.framework/$PART" "$REPO_APP/Contents/Frameworks/Sparkle.framework/Versions/B/$PART"
+done
+cp "$SPARKLE_ROOT/LICENSE" "$REPO_APP/Contents/Resources/Sparkle-LICENSE.txt"
 
 cat > "$REPO_APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -47,8 +66,16 @@ cat > "$REPO_APP/Contents/Info.plist" <<PLIST
   <key>CFBundleIdentifier</key><string>com.tony.markdown</string>
   <key>CFBundleExecutable</key><string>Markdown</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>1.1.0</string>
+  <key>CFBundleShortVersionString</key><string>$APP_VERSION</string>
   <key>CFBundleVersion</key><string>$BUILD_NUMBER</string>
+  <key>SUFeedURL</key><string>https://github.com/Singularity-Li/markdown/releases/latest/download/appcast.xml</string>
+  <key>SUPublicEDKey</key><string>$UPDATE_PUBLIC_KEY</string>
+  <key>SUEnableAutomaticChecks</key><true/>
+  <key>SUAllowsAutomaticUpdates</key><false/>
+  <key>SUAutomaticallyUpdate</key><false/>
+  <key>SUVerifyUpdateBeforeExtraction</key><true/>
+  <key>SURequireSignedFeed</key><true/>
+  <key>CFBundleDevelopmentRegion</key><string>zh_CN</string>
   <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>
@@ -93,6 +120,7 @@ codesign --force --deep -s - "$REPO_APP" 2>/dev/null || codesign --force -s - "$
 echo "==> 6/6 验证仓库根目录 App"
 codesign --verify --deep --strict "$REPO_APP"
 swift Tests/Icon/verify_bundle.swift "$REPO_APP"
+python3 scripts/verify_update_bundle.py "$REPO_APP"
 
 echo ""
 echo "完成。"
