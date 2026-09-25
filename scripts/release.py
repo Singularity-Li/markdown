@@ -2,7 +2,6 @@
 """发布 GitHub 正式版本；--prepare-only 只准备，--resume vX.Y.Z 恢复同一次发布。"""
 import argparse
 import base64
-import datetime
 import fcntl
 import hashlib
 import json
@@ -56,20 +55,14 @@ def validate_new_version(version, current, latest):
         raise ValueError('新版本必须高于已发布正式版')
 
 
-def make_feed(version, build, length, signature, notes):
+def make_feed(version, build, length, signature):
     version_tuple(version)
     rss = ET.Element('rss', {'version': '2.0'})
     channel = ET.SubElement(rss, 'channel')
-    ET.SubElement(channel, 'title').text = 'Markdown 更新'
-    ET.SubElement(channel, 'link').text = BASE + '/releases'
-    ET.SubElement(channel, 'language').text = 'zh-cn'
     item = ET.SubElement(channel, 'item')
-    ET.SubElement(item, 'title').text = 'Markdown ' + version
-    ET.SubElement(item, 'pubDate').text = datetime.datetime.now(datetime.timezone.utc).strftime('%a, %d %b %Y %H:%M:%S +0000')
     for name, value in [('version', str(build)), ('shortVersionString', version),
                         ('minimumSystemVersion', '26.0'), ('hardwareRequirements', 'arm64')]:
         ET.SubElement(item, '{' + SPARKLE_NS + '}' + name).text = value
-    ET.SubElement(item, 'description', {'{' + SPARKLE_NS + '}format': 'plain-text'}).text = notes
     ET.SubElement(item, 'enclosure', {
         'url': f'{BASE}/releases/download/v{version}/Markdown-{version}.zip',
         'length': str(length), 'type': 'application/octet-stream',
@@ -229,7 +222,7 @@ def build_release(directory, state):
         raise RuntimeError('更新签名格式错误')
     run(TOOLS / 'sign_update', '--account', ACCOUNT, '--verify', archive, signature)
     feed = directory / 'appcast.xml'
-    feed.write_bytes(make_feed(state['version'], state['build'], archive.stat().st_size, signature, state['notes']))
+    feed.write_bytes(make_feed(state['version'], state['build'], archive.stat().st_size, signature))
     run(TOOLS / 'sign_update', '--account', ACCOUNT, feed)
     run(TOOLS / 'sign_update', '--account', ACCOUNT, '--verify', feed)
     notes_path = ROOT / notes_rel

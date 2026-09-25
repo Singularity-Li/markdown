@@ -75,6 +75,7 @@
 - 发布前审查工作区，先完成并提交已授权开发；有无关用户改动时不得混入。根据实际改动撰写简洁中文说明到忽略的 `dist/release-notes.md`，传入 `--notes-file dist/release-notes.md`；无自定义说明时脚本从提交记录生成。
 - 必须使用脚本完成全链路，不手工跳过测试、签名或附件验证。发布仅从默认分支进行；脚本检查远程历史、钥匙串公钥、版本单调性，构建并压缩根目录 App，不另外组装 App。
 - 更新清单和更新包均由 Sparkle 工具签名，公钥固定在 `Resources/UpdatePublicKey.txt`，私钥属于钥匙串账户 `com.tony.markdown`。不得输出、提交或上传私钥；换电脑必须安全迁移原密钥，不能自动生成新密钥替代。
+- 更新清单遵循最小化原则：只保留 RSS 容器、构建号、展示版本号、最低系统版本、硬件要求，以及更新包下载 URL、长度、类型和签名。完整更新说明放在 GitHub Release 与 `docs/releases/`，不嵌入 appcast；不得删除 Sparkle 生成的清单签名或签名相关注释，签名后不再修改内容。
 - 每个正式 Release 必须包含 `Markdown-X.Y.Z.zip` 和已签名的 `appcast.xml`。先创建草稿、上传并下载校验，再发布为 latest，最后验证匿名下载和 latest 清单入口。不得覆盖已发布附件或强制改写 tag。
 - 失败保留本地提交、草稿及 `dist/releases/vX.Y.Z/state.json`，使用 `python3 scripts/release.py --resume vX.Y.Z` 恢复同一次发布；不要盲目递增版本重发。`--prepare-only` 仅准备，不能据此宣称已发布。
 - 发布完成报告版本、构建号、提交、Release 链接和验证范围。首次支持更新的版本需手动安装；后续才能从 App 一键升级。当前为 ad-hoc 签名，不能声称已 Apple 公证。

@@ -58,13 +58,21 @@ class ReleaseTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 release.version_tuple(value)
 
-    def test_feed_points_to_exact_release_and_escapes_notes(self):
-        data = release.make_feed('1.2.0', 42, 1234, 'signature', '<MD> & 更新')
+    def test_minimal_feed_preserves_update_and_security_fields(self):
+        data = release.make_feed('1.2.0', 42, 1234, 'signature')
         root = release.ET.fromstring(data)
         ns = {'s': release.SPARKLE_NS}
         item = root.find('./channel/item')
         self.assertEqual(item.find('s:version', ns).text, '42')
-        self.assertEqual(item.find('description').text, '<MD> & 更新')
+        self.assertEqual([child.tag for child in root.find('channel')], ['item'])
+        self.assertEqual(set(child.tag for child in item), {
+            '{' + release.SPARKLE_NS + '}' + name for name in
+            ('version', 'shortVersionString', 'minimumSystemVersion', 'hardwareRequirements')
+        } | {'enclosure'})
+        self.assertEqual(item.find('s:shortVersionString', ns).text, '1.2.0')
+        self.assertEqual(item.find('s:hardwareRequirements', ns).text, 'arm64')
+        self.assertEqual(item.find('enclosure').attrib['{' + release.SPARKLE_NS + '}edSignature'], 'signature')
+        self.assertLess(len(data), 800)
         self.assertEqual(item.find('enclosure').attrib['url'],
                          'https://github.com/Singularity-Li/markdown/releases/download/v1.2.0/Markdown-1.2.0.zip')
         self.assertEqual(item.find('enclosure').attrib['length'], '1234')
