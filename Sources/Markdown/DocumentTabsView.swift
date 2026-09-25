@@ -56,11 +56,18 @@ private struct DocumentTab: View {
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(iconColor)
                 .frame(width: 12)
-            Text(document.displayName + (document.isDirty ? " *" : ""))
+            Text(document.displayName)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(titleColor)
                 .lineLimit(1)
                 .truncationMode(.middle)
+            if document.isDirty {
+                Image(systemName: "asterisk")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(AppTheme.secondaryAccent)
+                    .frame(width: 10, height: AppTheme.toolbarControlHeight, alignment: .center)
+                    .accessibilityHidden(true)
+            }
         }
         .padding(.leading, 18)
         .frame(height: AppTheme.toolbarControlHeight)
