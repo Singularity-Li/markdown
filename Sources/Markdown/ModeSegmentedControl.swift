@@ -40,8 +40,8 @@ final class ModeSegmentedControl: NSSegmentedControl {
         guard selectedSegment >= 0 else { return }
         let position = targetSegment == nil ? CGFloat(selectedSegment) : highlightPosition
         let highlight = NSRect(x: bounds.minX + position * width, y: bounds.minY,
-                               width: width, height: bounds.height).insetBy(dx: 2, dy: 2)
-        let path = NSBezierPath(roundedRect: highlight, xRadius: 6, yRadius: 6)
+                               width: width, height: bounds.height).insetBy(dx: 2, dy: 0)
+        let path = NSBezierPath(roundedRect: highlight, xRadius: 8, yRadius: 8)
         AppTheme.accentNSColor.withAlphaComponent(isEnabled ? 1 : 0.35).setFill()
         path.fill()
         NSGraphicsContext.saveGraphicsState()

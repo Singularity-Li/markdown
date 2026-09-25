@@ -11,14 +11,20 @@ for appearanceName in [NSAppearance.Name.aqua, .darkAqua] {
         let bitmap = control.bitmapImageRepForCachingDisplay(in: control.bounds)!
         control.cacheDisplay(in: control.bounds, to: bitmap)
         var colored = [0, 0]
+        var coloredRows = Set<Int>()
         for y in 0..<bitmap.pixelsHigh {
             for x in 0..<bitmap.pixelsWide {
                 guard let color = bitmap.colorAt(x: x, y: y)?.usingColorSpace(.sRGB) else { continue }
                 if abs(color.redComponent - 166.0 / 255) < 0.04 && abs(color.greenComponent - 61.0 / 255) < 0.04 && abs(color.blueComponent - 80.0 / 255) < 0.04 {
                     colored[x < bitmap.pixelsWide / 2 ? 0 : 1] += 1
+                    coloredRows.insert(y)
                 }
             }
         }
+        if coloredRows.count != bitmap.pixelsHigh {
+            failures += 1
+            print("FAIL: 选中块应填满 28 点高度，实际覆盖 \(coloredRows.count)/\(bitmap.pixelsHigh) 像素行")
+        } else { print("PASS: 选中块填满控件高度，与工具栏按钮及标签等高") }
         if colored[selected] < 200 || colored[1-selected] > 10 {
             failures += 1
             print("FAIL: \(appearanceName.rawValue) 选中 \(selected) 的实际主题色像素 \(colored)")
