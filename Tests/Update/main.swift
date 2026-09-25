@@ -21,6 +21,13 @@ func expect(_ condition: @autoclosure () -> Bool, _ message: String) {
     guard condition() else { fatalError("FAIL: " + message) }
     print("PASS: " + message)
 }
+let updateCoordinator = AppUpdater()
+let updater = SPUUpdater(hostBundle: bundle, applicationBundle: bundle, userDriver: driver, delegate: updateCoordinator)
+expect(!updateCoordinator.isRelaunchingForUpdate, "普通退出不生成更新恢复记录")
+updateCoordinator.updaterWillRelaunchApplication(updater)
+expect(updateCoordinator.isRelaunchingForUpdate, "Sparkle 重启回调启用文件恢复，取消退出后仍允许再次尝试")
+updateCoordinator.updater(updater, didFinishUpdateCycleFor: .updates, error: nil)
+expect(!updateCoordinator.isRelaunchingForUpdate, "更新流程结束后清除更新退出标记")
 let packageURL = URL(string: "https://github.com/example/app/releases/download/v2/App.zip")!
 let blocked = NSError(domain: SUSparkleErrorDomain, code: 4005)
 let policy = UpdateRetryPolicy()

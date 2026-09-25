@@ -165,4 +165,65 @@ counted.text = "a\r\nb\rc\nd"
 check(counted.lineCount == 4, "兼容 CRLF、CR 和 LF 且 CRLF 不重复计数")
 counted.text = String(repeating: "很长的段落", count: 100)
 check(counted.lineCount == 1, "自动折行不增加文档行数")
+// 更新重启必须跨 DocumentStore 实例恢复，而不是只保留内存状态。
+let sessionURL = root.appendingPathComponent("session/state.json")
+let beforeUpdate = DocumentStore()
+beforeUpdate.handleOpen([file, next])
+beforeUpdate.openFolder(root)
+beforeUpdate.activate(file)
+beforeUpdate.isPreviewMode = false
+check(beforeUpdate.prepareUpdateRestart(at: sessionURL), "更新退出保存文件会话")
+let afterUpdate = DocumentStore()
+afterUpdate.restoreUpdateSession(at: sessionURL)
+check(afterUpdate.documents.compactMap(\.url) == [file, next], "更新重启恢复所有文件及标签顺序")
+check(afterUpdate.currentURL == file && !afterUpdate.isPreviewMode, "恢复当前标签及独立编辑模式")
+check(afterUpdate.documents.last?.isPreviewMode == true && afterUpdate.folderRoot == root && afterUpdate.showsSidebar,
+      "恢复后台预览模式及侧栏目录")
+let ordinaryLaunch = DocumentStore()
+ordinaryLaunch.restoreUpdateSession(at: sessionURL)
+check(ordinaryLaunch.documents.isEmpty, "更新会话只消费一次，普通启动不重新打开旧文件")
+beforeUpdate.updateText("取消更新时保留")
+beforeUpdate.confirmClose = { _ in .cancel }
+check(!beforeUpdate.prepareUpdateRestart(at: sessionURL) && beforeUpdate.isDirty && !FileManager.default.fileExists(atPath: sessionURL.path),
+      "取消保存确认时不退出、不产生恢复记录")
+beforeUpdate.confirmClose = { _ in .discard }
+check(beforeUpdate.prepareUpdateRestart(at: sessionURL), "允许丢弃修改后更新")
+let discarded = DocumentStore()
+discarded.restoreUpdateSession(at: sessionURL)
+check(discarded.markdownText != "取消更新时保留" && !discarded.isDirty, "恢复磁盘内容，不恢复已放弃的修改")
+beforeUpdate.newDocument()
+beforeUpdate.updateText("更新前新文件")
+let newSavedURL = root.appendingPathComponent("更新保存.md")
+beforeUpdate.chooseSaveURL = { _ in newSavedURL }
+beforeUpdate.confirmClose = { _ in .save }
+check(beforeUpdate.prepareUpdateRestart(at: sessionURL), "更新前可保存未命名文档")
+let savedSession = DocumentStore()
+savedSession.restoreUpdateSession(at: sessionURL)
+check(savedSession.currentURL == newSavedURL && savedSession.markdownText == "更新前新文件", "保存完成后记录新路径并恢复当前标签")
+check(beforeUpdate.prepareUpdateRestart(at: sessionURL), "再次生成会话")
+try FileManager.default.removeItem(at: newSavedURL)
+let missingSession = DocumentStore()
+missingSession.openFile(file)
+missingSession.restoreUpdateSession(at: sessionURL)
+check(missingSession.documents.compactMap(\.url) == [file, next] && missingSession.errorMessage != nil,
+      "缺失文件提示错误且继续恢复其他文件，已打开文件不重复")
+let discardedDraft = DocumentStore()
+discardedDraft.newDocument()
+discardedDraft.updateText("放弃的未命名草稿")
+discardedDraft.confirmClose = { _ in .discard }
+check(discardedDraft.prepareUpdateRestart(at: sessionURL), "未命名草稿可确认放弃后退出")
+let noDraft = DocumentStore()
+noDraft.restoreUpdateSession(at: sessionURL)
+check(noDraft.documents.isEmpty, "不恢复用户已放弃的未命名草稿")
+discardedDraft.confirmClose = { _ in .save }
+discardedDraft.chooseSaveURL = { _ in nil }
+check(!discardedDraft.prepareUpdateRestart(at: sessionURL) && !FileManager.default.fileExists(atPath: sessionURL.path),
+      "取消另存为时不生成恢复记录")
+try Data("invalid session".utf8).write(to: sessionURL)
+let corruptSession = DocumentStore()
+corruptSession.restoreUpdateSession(at: sessionURL)
+check(corruptSession.errorMessage != nil && !FileManager.default.fileExists(atPath: sessionURL.path),
+      "损坏记录提示错误并消费，避免每次启动重复报错")
+let blockedSessionURL = file.appendingPathComponent("state.json")
+check(!beforeUpdate.prepareUpdateRestart(at: blockedSessionURL), "会话写入失败阻止更新退出")
 exit(failures == 0 ? 0 : 1)

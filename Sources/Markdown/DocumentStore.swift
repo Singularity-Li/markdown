@@ -28,9 +28,26 @@ final class OpenDocument: Identifiable {
 
 enum CloseDecision { case save, discard, cancel }
 
+private struct UpdateDocumentSession: Codable {
+    struct Tab: Codable {
+        let url: URL
+        let isPreviewMode: Bool
+    }
+    let tabs: [Tab]
+    let activeURL: URL?
+    let folderRoot: URL?
+    let showsSidebar: Bool
+}
+
 @Observable
 final class DocumentStore {
     static let shared = DocumentStore()
+
+    static var updateSessionURL: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("com.tony.markdown", isDirectory: true)
+            .appendingPathComponent("update-session.json")
+    }
 
     private(set) var documents: [OpenDocument] = []
     private(set) var activeID: URL?
@@ -194,6 +211,45 @@ final class DocumentStore {
             if !mayClose(document) { return false }
         }
         return true
+    }
+
+    /// 先完成保存确认，再记录路径；不持久化用户选择放弃的正文。
+    func prepareUpdateRestart(at url: URL = DocumentStore.updateSessionURL,
+                              alreadyApproved: Bool = false) -> Bool {
+        guard alreadyApproved || canCloseAll() else { return false }
+        let session = UpdateDocumentSession(
+            tabs: documents.compactMap { document in
+                document.url.map { UpdateDocumentSession.Tab(url: $0, isPreviewMode: document.isPreviewMode) }
+            }, activeURL: currentURL, folderRoot: folderRoot, showsSidebar: showsSidebar)
+        do {
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try JSONEncoder().encode(session).write(to: url, options: .atomic)
+            return true
+        } catch {
+            errorMessage = "无法保存更新前的文件列表，已取消退出：\(error.localizedDescription)"
+            return false
+        }
+    }
+
+    /// 仅更新重启消费一次；缺失文件不会阻止其他标签恢复。
+    func restoreUpdateSession(at url: URL = DocumentStore.updateSessionURL) {
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        do {
+            let data = try Data(contentsOf: url)
+            try FileManager.default.removeItem(at: url)
+            let session = try JSONDecoder().decode(UpdateDocumentSession.self, from: data)
+            if let folder = session.folderRoot { openFolder(folder) }
+            for tab in session.tabs where tab.url.isFileURL {
+                if openFile(tab.url) { activeDocument?.isPreviewMode = tab.isPreviewMode }
+            }
+            if let activeURL = session.activeURL,
+               let document = documents.first(where: { $0.url == activeURL }) {
+                activate(document.id)
+            }
+            showsSidebar = session.showsSidebar && folderRoot != nil
+        } catch {
+            errorMessage = "无法恢复更新前的文件列表：\(error.localizedDescription)"
+        }
     }
 
     private func mayClose(_ document: OpenDocument) -> Bool {

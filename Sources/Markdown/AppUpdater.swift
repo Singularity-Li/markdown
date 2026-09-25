@@ -59,8 +59,14 @@ final class AppUpdater: NSObject, NSMenuItemValidation, SPUUpdaterDelegate {
     private var retryWork: DispatchWorkItem?
     private var retryPanel: NSPanel?
     private var retryGeneration = 0
+    private(set) var isRelaunchingForUpdate = false
+
+    func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
+        isRelaunchingForUpdate = true
+    }
 
     func updater(_ updater: SPUUpdater, didFinishUpdateCycleFor updateCheck: SPUUpdateCheck, error: Error?) {
+        isRelaunchingForUpdate = false
         guard let delay = driver.retryPolicy.pendingDelay else {
             driver.retryPolicy.reset()
             return

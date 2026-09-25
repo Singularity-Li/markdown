@@ -12,6 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         AppIconRefresh.refresh()
         DocumentStore.shared.confirmClose = { [weak self] document in self?.closeDecision(for: document) ?? .cancel }
         DocumentStore.shared.chooseSaveURL = { OpenPanelHelper.savePanel(for: $0) }
+        DocumentStore.shared.restoreUpdateSession()
         buildWindow()
         NSApp.activate()
         AppUpdater.shared.start()
@@ -20,7 +21,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        (didApproveWindowClose || DocumentStore.shared.canCloseAll()) ? .terminateNow : .terminateCancel
+        if AppUpdater.shared.isRelaunchingForUpdate {
+            if DocumentStore.shared.prepareUpdateRestart(alreadyApproved: didApproveWindowClose) {
+                return .terminateNow
+            }
+            // Sparkle 同一安装流程重试退出时不会再次发出 willRelaunch 回调。
+            return .terminateCancel
+        }
+        return (didApproveWindowClose || DocumentStore.shared.canCloseAll()) ? .terminateNow : .terminateCancel
     }
 
     // 双击文件 / 拖到 Dock 图标 / `open -a Markdown <路径>` 都会触发（odoc 事件）。
