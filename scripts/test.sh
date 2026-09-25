@@ -34,5 +34,5 @@ if [ ! -d "$SPARKLE_FRAMEWORK_DIR/Sparkle.framework" ]; then
 fi
 UPDATE_TEST_BIN="$(mktemp -t markdown-update-tests)"
 trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN" "$ICON_TEST_BIN" "$UPDATE_TEST_BIN"' EXIT
-swiftc -F "$SPARKLE_FRAMEWORK_DIR" -framework Sparkle -Xlinker -rpath -Xlinker "$SPARKLE_FRAMEWORK_DIR" Sources/Markdown/AppUpdater.swift Tests/Update/main.swift -o "$UPDATE_TEST_BIN"
+swiftc -F "$SPARKLE_FRAMEWORK_DIR" -framework Sparkle -Xlinker -rpath -Xlinker "$SPARKLE_FRAMEWORK_DIR" Sources/Markdown/UpdateRetryPolicy.swift Sources/Markdown/AppUpdater.swift Tests/Update/main.swift -o "$UPDATE_TEST_BIN"
 "$UPDATE_TEST_BIN" "$PWD/Markdown.app"
