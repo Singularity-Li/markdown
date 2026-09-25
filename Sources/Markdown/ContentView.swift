@@ -7,7 +7,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             WindowToolbarView(store: store)
-            Divider().opacity(0.2)
+            ToolbarSeparator()
             // 分栏仅作用于下方内容，不延伸到公共工具栏和标签栏。
             HSplitView {
                 if store.folderRoot != nil && store.showsSidebar {
@@ -55,4 +55,20 @@ struct ContentView: View {
         }
     }
 
+}
+
+private struct ToolbarSeparator: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+    var body: some View {
+        Rectangle()
+            .fill(Color.primary.opacity(contrast == .increased ? 0.55 : (colorScheme == .dark ? 0.32 : 0.22)))
+            .frame(height: 1)
+            .shadow(color: AppTheme.accent.opacity(reduceTransparency ? 0 : (colorScheme == .dark ? 0.4 : 0.22)),
+                    radius: 2, x: 0, y: 0)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
 }
