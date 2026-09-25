@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
+        AppIconRefresh.refresh()
         DocumentStore.shared.confirmClose = { [weak self] document in self?.closeDecision(for: document) ?? .cancel }
         DocumentStore.shared.chooseSaveURL = { OpenPanelHelper.savePanel(for: $0) }
         buildWindow()
