@@ -2,6 +2,7 @@ import SwiftUI
 import AppKit
 
 struct DetailView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let store: DocumentStore
 
     var body: some View {
@@ -62,6 +63,7 @@ struct DetailView: View {
                             EditorView(document: document, isActive: document.id == store.activeID)
                         }
                     }
+                    .animation(reduceMotion ? nil : AppTheme.transitionAnimation, value: document.isPreviewMode)
                     .opacity(document.id == store.activeID ? 1 : 0)
                     .allowsHitTesting(document.id == store.activeID)
                     .disabled(document.id != store.activeID)

@@ -2,6 +2,7 @@ import SwiftUI
 
 /// 全窗口共用一行工具栏，侧栏与正文没有各自不同高度的标题区。
 struct WindowToolbarView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let store: DocumentStore
     private let appearance = AppearanceSettings.shared
 
@@ -101,6 +102,7 @@ struct WindowToolbarView: View {
         }
         .padding(.horizontal, 14)
         .padding(.leading, store.isWindowFullScreen ? 0 : 74)
+        .animation(reduceMotion ? nil : AppTheme.transitionAnimation, value: store.isWindowFullScreen)
         .frame(height: 36)
     }
 
@@ -135,7 +137,8 @@ private struct ReadingModeControl: NSViewRepresentable {
 
     func updateNSView(_ control: ModeSegmentedControl, context: Context) {
         context.coordinator.selection = $isPreview
-        control.selectedSegment = isPreview ? 1 : 0
+        control.setModeSelection(isPreview ? 1 : 0,
+                                 animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
         control.isEnabled = isEnabled
         control.needsDisplay = true
     }
