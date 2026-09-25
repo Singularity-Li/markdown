@@ -52,11 +52,11 @@ private struct DocumentTab: View {
 
     private var tabLabel: some View {
         HStack(spacing: 7) {
-            Image(systemName: document.isDirty ? "circle.fill" : "doc.text")
-                .font(.system(size: document.isDirty ? 6 : 11, weight: .medium))
+            Image(systemName: "doc.text")
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(iconColor)
                 .frame(width: 12)
-            Text(document.displayName)
+            Text(document.displayName + (document.isDirty ? " *" : ""))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(titleColor)
                 .lineLimit(1)
