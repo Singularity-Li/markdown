@@ -82,7 +82,6 @@ cat > "$REPO_APP/Contents/Info.plist" <<PLIST
   <key>CFBundleIconFile</key><string>$ICON_NAME</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
   <key>LSMultipleInstancesProhibited</key><true/>
-  <key>NSHumanReadableCopyright</key><string>仅供个人使用</string>
   <key>UTExportedTypeDeclarations</key>
   <array>
     <dict>
