@@ -1232,8 +1232,8 @@ return He}()
 /* 液态玻璃友好型 Markdown 样式：透明背景，浅色/深色自适应 */
 :root {
   color-scheme: light dark;
-  --app-accent: #a63d50;
-  accent-color: var(--app-accent);
+  --markdown-accent: #0969da;
+  accent-color: var(--markdown-accent);
 }
 * { box-sizing: border-box; }
 html, body {
@@ -1268,8 +1268,8 @@ h4 { font-size: 1.1em; }
 h5, h6 { font-size: 1em; }
 
 p { margin: 0.8em 0; }
-::selection { background: rgba(166, 61, 80, 0.25); }
-a { color: var(--app-accent); text-decoration: none; }
+::selection { background: rgba(9, 105, 218, 0.22); }
+a { color: var(--markdown-accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 strong { font-weight: 700; }
 em { font-style: italic; }
@@ -1283,7 +1283,8 @@ ul.contains-task-list, ol.contains-task-list {
   list-style: none;
   padding-left: 0.4em;
 }
-input[type="checkbox"] { margin-right: 0.5em; vertical-align: -0.1em; }
+.task-list-item { list-style: none; }
+input[type="checkbox"] { width: 18px; height: 18px; margin: 0 0.5em 0 0; vertical-align: -0.2em; opacity: 1; }
 
 blockquote {
   margin: 0.8em 0;
@@ -1335,6 +1336,7 @@ img { max-width: 100%; border-radius: 10px; display: block; margin: 0.5em 0; }
   body { color: rgba(0,0,0,0.88); }
 }
 @media (prefers-color-scheme: dark) {
+  :root { --markdown-accent: #58a6ff; }
   body { color: rgba(255,255,255,0.92); }
 }
 

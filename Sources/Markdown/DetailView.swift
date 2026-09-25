@@ -56,11 +56,19 @@ struct DetailView: View {
                             .foregroundStyle(.secondary)
                             .padding(24)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        } else if document.isPreviewMode {
-                            PreviewView(markdown: document.text, baseURL: document.url?.deletingLastPathComponent(),
-                                        isActive: document.id == store.activeID)
                         } else {
-                            EditorView(document: document, isActive: document.id == store.activeID)
+                            ZStack {
+                                PreviewView(document: document,
+                                            isActive: document.id == store.activeID && document.isPreviewMode)
+                                    .opacity(document.isPreviewMode ? 1 : 0)
+                                    .allowsHitTesting(document.isPreviewMode)
+                                    .accessibilityHidden(!document.isPreviewMode)
+                                EditorView(document: document,
+                                           isActive: document.id == store.activeID && !document.isPreviewMode)
+                                    .opacity(document.isPreviewMode ? 0 : 1)
+                                    .allowsHitTesting(!document.isPreviewMode)
+                                    .accessibilityHidden(document.isPreviewMode)
+                            }
                         }
                     }
                     .animation(reduceMotion ? nil : AppTheme.transitionAnimation, value: document.isPreviewMode)

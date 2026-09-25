@@ -42,3 +42,8 @@ MODE_TEST_BIN="$(mktemp -t markdown-mode-tests)"
 trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN" "$ICON_TEST_BIN" "$UPDATE_TEST_BIN" "$MODE_TEST_BIN"' EXIT
 swiftc Sources/Markdown/AppTheme.swift Sources/Markdown/ModeSegmentedControl.swift Sources/Markdown/ReadingModeControl.swift Tests/ModeControl/main.swift -o "$MODE_TEST_BIN"
 "$MODE_TEST_BIN"
+
+EDITOR_TEST_BIN="$(mktemp -t markdown-editor-tests)"
+trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN" "$ICON_TEST_BIN" "$UPDATE_TEST_BIN" "$MODE_TEST_BIN" "$EDITOR_TEST_BIN"' EXIT
+swiftc Sources/Markdown/AppTheme.swift Sources/Markdown/DocumentStore.swift Sources/Markdown/FileNode.swift Sources/Markdown/MarkdownSyntax.swift Sources/Markdown/EditorView.swift Tests/Editor/main.swift -o "$EDITOR_TEST_BIN"
+"$EDITOR_TEST_BIN"

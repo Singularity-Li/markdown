@@ -10,7 +10,19 @@ final class PreviewCheck: NSObject, WKNavigationDelegate {
         (() => {
             const content = document.getElementById('content');
             const headings = Array.from(content.querySelectorAll('h2'));
+            const checkbox = content.querySelector('input[type="checkbox"]');
+            const target = Array.from(content.querySelectorAll('h2')).find(n => n.textContent === '位置 50');
+            const offset = Number(target.dataset.sourceStart);
+            window.mdRestoreOffset(offset);
+            const positionMatches = Math.abs(window.mdSourceOffset() - offset) < 2 && window.scrollY > 1000;
+            window.mdRestoreOffset(0);
             return [
+                ['恢复文档顶部没有额外偏移', window.scrollY === 0],
+                ['引用式链接正常渲染', content.querySelector('a[href="https://example.com"]') !== null],
+                ['复选框具有清晰的18像素尺寸', checkbox.getBoundingClientRect().width >= 18 && checkbox.getBoundingClientRect().height >= 18],
+                ['任务复选框没有重复列表圆点', getComputedStyle(checkbox.closest('li')).listStyleType === 'none'],
+                ['链接使用常规蓝色', ['rgb(9, 105, 218)', 'rgb(88, 166, 255)'].includes(getComputedStyle(content.querySelector('a')).color)],
+                ['预览中部位置可从源码偏移恢复并读回', positionMatches],
                 ['宽窗口正文填满可用宽度', Math.abs(content.getBoundingClientRect().width - document.documentElement.clientWidth) < 2],
                 ['预览左右边距保持紧凑', parseFloat(getComputedStyle(content).paddingLeft) <= 18],
                 ['保留中文自定义锚点', headings[0].id === 'zh'],
@@ -53,7 +65,14 @@ webView.loadHTMLString(MarkdownHTML.document(markdown: """
 ## English
 
 ## English
-"""), baseURL: URL(fileURLWithPath: NSTemporaryDirectory()))
+
+- [ ] 待办
+- [x] 完成
+
+[参考][reference]
+
+[reference]: https://example.com
+""" + (1...100).map { "\n\n## 位置 \($0)\n\n中文与 emoji 👋 正文 \($0)\n\n一段额外内容。" }.joined()), baseURL: URL(fileURLWithPath: NSTemporaryDirectory()))
 let deadline = Date().addingTimeInterval(20)
 while !checker.finished && Date() < deadline {
     RunLoop.current.run(until: Date().addingTimeInterval(0.05))

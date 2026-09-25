@@ -13,6 +13,7 @@ final class OpenDocument: Identifiable {
     var lineCount: Int { text.reduce(1) { $0 + ($1.isNewline ? 1 : 0) } }
     var savedText: String
     let isSupported: Bool
+    @ObservationIgnored var viewportSourceOffset: Double = 0
     var isPreviewMode = true
     var isDirty: Bool { isSupported && text != savedText }
 

@@ -3,14 +3,14 @@ import WebKit
 
 /// 用 WKWebView 渲染 Markdown（marked + highlight.js，全部内嵌离线，无网络依赖）。
 struct PreviewView: NSViewRepresentable {
-    let markdown: String
-    let baseURL: URL?
+    let document: OpenDocument
     let isActive: Bool
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator { Coordinator(document: document) }
 
     func makeNSView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
+        configuration.userContentController.add(context.coordinator, name: "viewport")
         configuration.setURLSchemeHandler(context.coordinator.images, forURLScheme: "md-image")
         let webView = FocusedMarkdownWebView(frame: .zero, configuration: configuration)
         webView.setValue(false, forKey: "drawsBackground")
@@ -25,16 +25,38 @@ struct PreviewView: NSViewRepresentable {
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        let coordinator = context.coordinator
+        let becameActive = isActive && !coordinator.isActive
+        coordinator.isActive = isActive
         (webView as? FocusedMarkdownWebView)?.setActive(isActive)
-        let key = (baseURL?.path ?? "<no-base>") + "\u{0}" + markdown
-        guard context.coordinator.key != key else { return }
-        context.coordinator.key = key
-        context.coordinator.images.directory = baseURL
-        // baseURL = 文件所在目录，用于解析相对路径的图片等资源。
-        webView.loadHTMLString(MarkdownHTML.document(markdown: markdown), baseURL: baseURL)
+        guard isActive else { return }
+        let baseURL = document.url?.deletingLastPathComponent()
+        let key = (baseURL?.path ?? "<no-base>") + "\u{0}" + document.text
+        if coordinator.key != key {
+            coordinator.key = key
+            coordinator.loaded = false
+            coordinator.images.directory = baseURL
+            webView.loadHTMLString(MarkdownHTML.document(markdown: document.text,
+                                                        sourceOffset: document.viewportSourceOffset), baseURL: baseURL)
+        } else if becameActive && coordinator.loaded {
+            webView.evaluateJavaScript("window.mdRestoreOffset(\(document.viewportSourceOffset))")
+        }
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "viewport")
+    }
+
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        let document: OpenDocument
+        var isActive = false
+        var loaded = false
+        init(document: OpenDocument) { self.document = document }
+
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard isActive, loaded, let value = message.body as? Double, value.isFinite else { return }
+            document.viewportSourceOffset = max(0, min(Double((document.text as NSString).length), value))
+        }
         var key = ""
         let images = LocalImageHandler()
 
@@ -57,6 +79,7 @@ struct PreviewView: NSViewRepresentable {
 
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            loaded = true
             (webView as? FocusedMarkdownWebView)?.requestContentFocus()
             // 静默诊断：只有渲染结果为空或捕获到 JS 错误时才打日志。
             webView.evaluateJavaScript(
