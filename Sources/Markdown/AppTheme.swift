@@ -3,6 +3,8 @@ import AppKit
 
 /// 品牌主强调色取自图标 D，次强调色取自图标 M。
 enum AppTheme {
+    static let toolbarControlHeight: CGFloat = 24
+    static let toolbarCornerRadius: CGFloat = 7
     static let transitionDuration: TimeInterval = 0.25
     static let transitionAnimation = Animation.easeInOut(duration: transitionDuration)
 

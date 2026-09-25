@@ -3,6 +3,10 @@ import QuartzCore
 
 /// 保留 NSSegmentedControl 的选择、键盘和辅助功能行为，绘制稳定的品牌选中底色。
 final class ModeSegmentedControl: NSSegmentedControl {
+    override var intrinsicContentSize: NSSize {
+        NSSize(width: super.intrinsicContentSize.width, height: AppTheme.toolbarControlHeight)
+    }
+
     @objc dynamic var highlightPosition: CGFloat = 0 {
         didSet { needsDisplay = true }
     }
@@ -28,7 +32,7 @@ final class ModeSegmentedControl: NSSegmentedControl {
     }
 
     override func draw(_ dirtyRect: NSRect) {
-        let background = NSBezierPath(roundedRect: bounds.insetBy(dx: 0.5, dy: 0.5), xRadius: 8, yRadius: 8)
+        let background = NSBezierPath(roundedRect: bounds.insetBy(dx: 0.5, dy: 0.5), xRadius: AppTheme.toolbarCornerRadius, yRadius: AppTheme.toolbarCornerRadius)
         NSColor.controlBackgroundColor.withAlphaComponent(0.7).setFill()
         background.fill()
         NSColor.separatorColor.withAlphaComponent(0.4).setStroke()
@@ -40,11 +44,14 @@ final class ModeSegmentedControl: NSSegmentedControl {
         guard selectedSegment >= 0 else { return }
         let position = targetSegment == nil ? CGFloat(selectedSegment) : highlightPosition
         let highlight = NSRect(x: bounds.minX + position * width, y: bounds.minY,
-                               width: width, height: bounds.height).insetBy(dx: 2, dy: 0)
-        let path = NSBezierPath(roundedRect: highlight, xRadius: 8, yRadius: 8)
+                               width: width, height: bounds.height)
+        // 整体圆角裁剪，选中半边贴齐外缘，中间分界不额外留白。
+        NSGraphicsContext.saveGraphicsState()
+        NSBezierPath(roundedRect: bounds, xRadius: AppTheme.toolbarCornerRadius,
+                     yRadius: AppTheme.toolbarCornerRadius).addClip()
+        let path = NSBezierPath(rect: highlight)
         AppTheme.accentNSColor.withAlphaComponent(isEnabled ? 1 : 0.35).setFill()
         path.fill()
-        NSGraphicsContext.saveGraphicsState()
         path.addClip()
         drawLabels(width: width, color: isEnabled ? .white : .disabledControlTextColor)
         NSGraphicsContext.restoreGraphicsState()
@@ -64,6 +71,6 @@ final class ModeSegmentedControl: NSSegmentedControl {
 
     override var focusRingMaskBounds: NSRect { bounds }
     override func drawFocusRingMask() {
-        NSBezierPath(roundedRect: bounds, xRadius: 8, yRadius: 8).fill()
+        NSBezierPath(roundedRect: bounds, xRadius: AppTheme.toolbarCornerRadius, yRadius: AppTheme.toolbarCornerRadius).fill()
     }
 }

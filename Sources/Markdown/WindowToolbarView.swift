@@ -94,7 +94,7 @@ struct WindowToolbarView: View {
                 get: { store.isPreviewMode },
                 set: { store.isPreviewMode = $0 }
             ), isEnabled: store.activeDocument?.isSupported == true)
-            .frame(width: 104, height: 28)
+            .frame(width: 104, height: AppTheme.toolbarControlHeight)
             .help("切换编辑或预览模式（⌘⇧P）")
             .disabled(store.activeDocument?.isSupported != true)
             .accessibilityElement(children: .contain)
@@ -103,7 +103,7 @@ struct WindowToolbarView: View {
         .padding(.horizontal, 14)
         .padding(.leading, store.isWindowFullScreen ? 0 : 74)
         .animation(reduceMotion ? nil : AppTheme.transitionAnimation, value: store.isWindowFullScreen)
-        .frame(height: 36)
+        .frame(height: 32)
     }
 
 
@@ -112,42 +112,9 @@ struct WindowToolbarView: View {
 private struct CompactToolbarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .frame(width: 34, height: 28)
+            .frame(width: 34, height: AppTheme.toolbarControlHeight)
             .contentShape(Rectangle())
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 8))
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: AppTheme.toolbarCornerRadius))
             .opacity(configuration.isPressed ? 0.65 : 1)
-    }
-}
-
-/// 使用原生分段控件交互，并显式绘制品牌选中块。
-private struct ReadingModeControl: NSViewRepresentable {
-    @Binding var isPreview: Bool
-    let isEnabled: Bool
-
-    func makeCoordinator() -> Coordinator { Coordinator(selection: $isPreview) }
-
-    func makeNSView(context: Context) -> ModeSegmentedControl {
-        let control = ModeSegmentedControl(labels: ["编辑", "预览"], trackingMode: .selectOne,
-                                         target: context.coordinator, action: #selector(Coordinator.selectMode(_:)))
-        control.controlSize = .large
-        control.segmentStyle = .rounded
-        control.setAccessibilityLabel("阅读模式")
-        return control
-    }
-
-    func updateNSView(_ control: ModeSegmentedControl, context: Context) {
-        context.coordinator.selection = $isPreview
-        control.setModeSelection(isPreview ? 1 : 0,
-                                 animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
-        control.isEnabled = isEnabled
-        control.needsDisplay = true
-    }
-
-    final class Coordinator: NSObject {
-        var selection: Binding<Bool>
-        init(selection: Binding<Bool>) { self.selection = selection }
-        @objc func selectMode(_ sender: NSSegmentedControl) {
-            selection.wrappedValue = sender.selectedSegment == 1
-        }
     }
 }

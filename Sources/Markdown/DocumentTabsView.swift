@@ -36,7 +36,7 @@ private struct DocumentTab: View {
     @TabState private var isCloseHovered = false
 
     private var isSelected: Bool { document.id == store.activeID }
-    private var shape: RoundedRectangle { RoundedRectangle(cornerRadius: 8, style: .continuous) }
+    private var shape: RoundedRectangle { RoundedRectangle(cornerRadius: AppTheme.toolbarCornerRadius, style: .continuous) }
     private var surface: Color {
         if isSelected {
             return Color(nsColor: .controlBackgroundColor)
@@ -63,7 +63,7 @@ private struct DocumentTab: View {
                 .truncationMode(.middle)
         }
         .padding(.leading, 18)
-        .frame(height: 28)
+        .frame(height: AppTheme.toolbarControlHeight)
         .contentShape(Rectangle())
     }
 
@@ -85,7 +85,7 @@ private struct DocumentTab: View {
                     .frame(width: 18, height: 18)
                     .background(Color.primary.opacity(isCloseHovered ? 0.09 : 0),
                                 in: RoundedRectangle(cornerRadius: 5, style: .continuous))
-                    .frame(width: 26, height: 28)
+                    .frame(width: 26, height: AppTheme.toolbarControlHeight)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -94,7 +94,7 @@ private struct DocumentTab: View {
             .help("关闭标签页")
         }
         .frame(maxWidth: 240)
-        .frame(height: 28)
+        .frame(height: AppTheme.toolbarControlHeight)
         .background(surface, in: shape)
         .overlay {
             shape.strokeBorder(Color.primary.opacity(isSelected ? (contrast == .increased ? 0.45 : 0.12) : 0),
