@@ -52,6 +52,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     // MARK: - 窗口
 
+    func windowDidEnterFullScreen(_ notification: Notification) {
+        DocumentStore.shared.isWindowFullScreen = true
+    }
+
+    func windowDidExitFullScreen(_ notification: Notification) {
+        DocumentStore.shared.isWindowFullScreen = false
+    }
+
     private func buildWindow() {
         let win = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 1160, height: 780),

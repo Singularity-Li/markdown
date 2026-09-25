@@ -107,7 +107,7 @@ struct WindowToolbarView: View {
             .accessibilityLabel("阅读模式")
         }
         .padding(.horizontal, 14)
-        .padding(.leading, 74)
+        .padding(.leading, store.isWindowFullScreen ? 0 : 74)
         .frame(height: 36)
     }
 

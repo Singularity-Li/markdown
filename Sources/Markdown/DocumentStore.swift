@@ -56,6 +56,7 @@ final class DocumentStore {
     var confirmClose: ((OpenDocument) -> CloseDecision)?
     var errorMessage: String?
     var showsSidebar = false
+    var isWindowFullScreen = false
     var showsAppearancePopover = false
     var isDropTargeted = false
     var folderRoot: URL?
