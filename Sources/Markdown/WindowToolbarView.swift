@@ -98,9 +98,9 @@ struct WindowToolbarView: View {
             }
             .pickerStyle(.segmented)
             .labelsHidden()
-            .controlSize(.regular)
+            .controlSize(.large)
             .tint(store.isPreviewMode ? AppTheme.secondaryAccent : AppTheme.accent)
-            .frame(width: 104)
+            .frame(width: 104, height: 28)
             .help("切换编辑或预览模式（⌘⇧P）")
             .disabled(store.activeDocument?.isSupported != true)
             .accessibilityElement(children: .contain)
