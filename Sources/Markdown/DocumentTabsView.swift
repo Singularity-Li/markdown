@@ -62,7 +62,7 @@ private struct DocumentTab: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
         }
-        .padding(.leading, 11)
+        .padding(.leading, 18)
         .frame(height: 28)
         .contentShape(Rectangle())
     }
@@ -100,13 +100,13 @@ private struct DocumentTab: View {
             shape.strokeBorder(Color.primary.opacity(isSelected ? (contrast == .increased ? 0.45 : 0.12) : 0),
                                lineWidth: contrast == .increased ? 1 : 0.5)
         }
-        .overlay(alignment: .bottom) {
+        .overlay(alignment: .leading) {
             // 常亮的小光点标识选中态，避免闪烁干扰阅读。
             Circle()
                 .fill(selectionColor)
                 .frame(width: 4, height: 4)
                 .shadow(color: selectionColor.opacity(0.6), radius: 3)
-                .padding(.bottom, 1)
+                .padding(.leading, 6)
                 .opacity(isSelected ? 1 : 0)
                 .accessibilityHidden(true)
                 .allowsHitTesting(false)
