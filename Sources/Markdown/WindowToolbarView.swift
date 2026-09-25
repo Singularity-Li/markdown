@@ -89,17 +89,10 @@ struct WindowToolbarView: View {
                 .frame(width: 260)
             }
 
-            Picker("阅读模式", selection: Binding(
+            ReadingModeControl(isPreview: Binding(
                 get: { store.isPreviewMode },
                 set: { store.isPreviewMode = $0 }
-            )) {
-                Text("编辑").tag(false)
-                Text("预览").tag(true)
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .controlSize(.large)
-            .tint(store.isPreviewMode ? AppTheme.secondaryAccent : AppTheme.accent)
+            ), isEnabled: store.activeDocument?.isSupported == true)
             .frame(width: 104, height: 28)
             .help("切换编辑或预览模式（⌘⇧P）")
             .disabled(store.activeDocument?.isSupported != true)
@@ -121,5 +114,37 @@ private struct CompactToolbarButtonStyle: ButtonStyle {
             .contentShape(Rectangle())
             .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 8))
             .opacity(configuration.isPressed ? 0.65 : 1)
+    }
+}
+
+/// 直接配置原生分段控件的选中底色，避免 SwiftUI Picker 在 macOS 忽略 tint。
+private struct ReadingModeControl: NSViewRepresentable {
+    @Binding var isPreview: Bool
+    let isEnabled: Bool
+
+    func makeCoordinator() -> Coordinator { Coordinator(selection: $isPreview) }
+
+    func makeNSView(context: Context) -> NSSegmentedControl {
+        let control = NSSegmentedControl(labels: ["编辑", "预览"], trackingMode: .selectOne,
+                                         target: context.coordinator, action: #selector(Coordinator.selectMode(_:)))
+        control.controlSize = .large
+        control.segmentStyle = .rounded
+        control.setAccessibilityLabel("阅读模式")
+        return control
+    }
+
+    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        context.coordinator.selection = $isPreview
+        control.selectedSegment = isPreview ? 1 : 0
+        control.isEnabled = isEnabled
+        control.selectedSegmentBezelColor = AppTheme.accentNSColor
+    }
+
+    final class Coordinator: NSObject {
+        var selection: Binding<Bool>
+        init(selection: Binding<Bool>) { self.selection = selection }
+        @objc func selectMode(_ sender: NSSegmentedControl) {
+            selection.wrappedValue = sender.selectedSegment == 1
+        }
     }
 }
