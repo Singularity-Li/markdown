@@ -69,7 +69,7 @@ struct SidebarRow: View {
     private var rowLabel: some View {
         HStack(spacing: 7) {
             Image(systemName: node.isDirectory ? "folder" : node.icon)
-                .foregroundStyle(node.isDirectory ? Color.accentColor : Color.secondary)
+                .foregroundStyle(node.isDirectory ? AppTheme.accent : Color.secondary)
             Text(node.name)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -77,7 +77,7 @@ struct SidebarRow: View {
         }
         .padding(.vertical, 3)
         .padding(.horizontal, 5)
-        .background(store.selectedURL == node.url.standardizedFileURL.resolvingSymlinksInPath() ? Color.accentColor.opacity(0.22) : Color.clear)
+        .background(store.selectedURL == node.url.standardizedFileURL.resolvingSymlinksInPath() ? AppTheme.accent.opacity(0.22) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .contentShape(Rectangle())
     }

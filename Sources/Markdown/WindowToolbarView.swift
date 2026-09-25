@@ -90,8 +90,8 @@ struct WindowToolbarView: View {
             }
 
             HStack(spacing: 0) {
-                modeButton("编辑", preview: false, color: .orange)
-                modeButton("预览", preview: true, color: .blue)
+                modeButton("编辑", preview: false)
+                modeButton("预览", preview: true)
             }
             .frame(height: 28)
             .background(.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
@@ -104,13 +104,13 @@ struct WindowToolbarView: View {
         .frame(height: 36)
     }
 
-    private func modeButton(_ title: String, preview: Bool, color: Color) -> some View {
+    private func modeButton(_ title: String, preview: Bool) -> some View {
         Button { store.isPreviewMode = preview } label: {
             Text(title)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(store.isPreviewMode == preview ? color : .secondary)
+                .foregroundStyle(store.isPreviewMode == preview ? AppTheme.accent : .secondary)
                 .frame(width: 44, height: 28)
-                .background(store.isPreviewMode == preview ? color.opacity(0.15) : .clear,
+                .background(store.isPreviewMode == preview ? AppTheme.accent.opacity(0.15) : .clear,
                             in: RoundedRectangle(cornerRadius: 8))
                 .contentShape(Rectangle())
         }

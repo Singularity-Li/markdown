@@ -47,7 +47,7 @@ private struct DocumentTab: View {
 
     private var titleColor: Color { isSelected ? .primary : .secondary }
     // 与 App 图标中字母 D 使用相同的 sRGB 酒红色（#A63D50）。
-    private var selectionColor: Color { Color(.sRGB, red: 166.0 / 255, green: 61.0 / 255, blue: 80.0 / 255) }
+    private var selectionColor: Color { AppTheme.accent }
     private var iconColor: Color { isSelected ? selectionColor : .secondary }
 
     private var tabLabel: some View {

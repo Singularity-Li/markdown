@@ -26,7 +26,8 @@ struct EditorView: NSViewRepresentable {
         text.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
         text.textContainerInset = NSSize(width: 18, height: 16)
         text.font = MarkdownSyntax.baseFont
-        text.insertionPointColor = .labelColor
+        text.insertionPointColor = AppTheme.accentNSColor
+        text.selectedTextAttributes = [.backgroundColor: AppTheme.accentNSColor.withAlphaComponent(0.25)]
         text.setAccessibilityLabel("Markdown 编辑器")
         text.delegate = context.coordinator
         text.string = document.text

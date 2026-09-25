@@ -20,6 +20,8 @@ struct ContentView: View {
         }
         .ignoresSafeArea(.container, edges: .top)
         .background(Color.clear)
+        .tint(AppTheme.accent)
+        .accentColor(AppTheme.accent)
         .onDrop(of: [UTType.fileURL], isTargeted: Binding(
             get: { store.isDropTargeted }, set: { store.isDropTargeted = $0 }
         )) { providers in
@@ -30,7 +32,7 @@ struct ContentView: View {
         .overlay {
             if store.isDropTargeted {
                 RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(Color.accentColor, lineWidth: 3)
+                    .strokeBorder(AppTheme.accent, lineWidth: 3)
                     .allowsHitTesting(false)
             }
         }

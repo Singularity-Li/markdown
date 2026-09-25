@@ -1232,6 +1232,8 @@ return He}()
 /* 液态玻璃友好型 Markdown 样式：透明背景，浅色/深色自适应 */
 :root {
   color-scheme: light dark;
+  --app-accent: #a63d50;
+  accent-color: var(--app-accent);
 }
 * { box-sizing: border-box; }
 html, body {
@@ -1266,7 +1268,8 @@ h4 { font-size: 1.1em; }
 h5, h6 { font-size: 1em; }
 
 p { margin: 0.8em 0; }
-a { color: #0a84ff; text-decoration: none; }
+::selection { background: rgba(166, 61, 80, 0.25); }
+a { color: var(--app-accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 strong { font-weight: 700; }
 em { font-style: italic; }
