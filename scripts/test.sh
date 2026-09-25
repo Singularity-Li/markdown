@@ -36,3 +36,9 @@ UPDATE_TEST_BIN="$(mktemp -t markdown-update-tests)"
 trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN" "$ICON_TEST_BIN" "$UPDATE_TEST_BIN"' EXIT
 swiftc -F "$SPARKLE_FRAMEWORK_DIR" -framework Sparkle -Xlinker -rpath -Xlinker "$SPARKLE_FRAMEWORK_DIR" Sources/Markdown/UpdateRetryPolicy.swift Sources/Markdown/AppUpdater.swift Tests/Update/main.swift -o "$UPDATE_TEST_BIN"
 "$UPDATE_TEST_BIN" "$PWD/Markdown.app"
+
+# 验证实际绘制像素，避免系统外观忽略主题色而仅属性测试通过。
+MODE_TEST_BIN="$(mktemp -t markdown-mode-tests)"
+trap 'rm -f "$TEST_BIN" "$PREVIEW_TEST_BIN" "$SYNTAX_TEST_BIN" "$FOCUS_TEST_BIN" "$ICON_TEST_BIN" "$UPDATE_TEST_BIN" "$MODE_TEST_BIN"' EXIT
+swiftc Sources/Markdown/AppTheme.swift Sources/Markdown/ModeSegmentedControl.swift Tests/ModeControl/main.swift -o "$MODE_TEST_BIN"
+"$MODE_TEST_BIN"

@@ -117,15 +117,15 @@ private struct CompactToolbarButtonStyle: ButtonStyle {
     }
 }
 
-/// 直接配置原生分段控件的选中底色，避免 SwiftUI Picker 在 macOS 忽略 tint。
+/// 使用原生分段控件交互，并显式绘制品牌选中块。
 private struct ReadingModeControl: NSViewRepresentable {
     @Binding var isPreview: Bool
     let isEnabled: Bool
 
     func makeCoordinator() -> Coordinator { Coordinator(selection: $isPreview) }
 
-    func makeNSView(context: Context) -> NSSegmentedControl {
-        let control = NSSegmentedControl(labels: ["编辑", "预览"], trackingMode: .selectOne,
+    func makeNSView(context: Context) -> ModeSegmentedControl {
+        let control = ModeSegmentedControl(labels: ["编辑", "预览"], trackingMode: .selectOne,
                                          target: context.coordinator, action: #selector(Coordinator.selectMode(_:)))
         control.controlSize = .large
         control.segmentStyle = .rounded
@@ -133,11 +133,11 @@ private struct ReadingModeControl: NSViewRepresentable {
         return control
     }
 
-    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+    func updateNSView(_ control: ModeSegmentedControl, context: Context) {
         context.coordinator.selection = $isPreview
         control.selectedSegment = isPreview ? 1 : 0
         control.isEnabled = isEnabled
-        control.selectedSegmentBezelColor = AppTheme.accentNSColor
+        control.needsDisplay = true
     }
 
     final class Coordinator: NSObject {

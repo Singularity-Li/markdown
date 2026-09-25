@@ -14,7 +14,7 @@
 - 次强调色使用 App 图标字母 M 的深蓝色：sRGB `#203B5B`（32, 59, 91）。编辑/预览分段开关的选中块统一使用主强调色；后续界面确需第二种强调色时也使用此色，不另引入其他品牌强调色。未选中态仍保持中性色，不把次强调色当作所有次要文字的颜色。
 - SwiftUI 与 AppKit 统一引用 `Sources/Markdown/AppTheme.swift`：主色为 `AppTheme.accent` / `accentNSColor`，次色为 `AppTheme.secondaryAccent` / `secondaryAccentNSColor`。预览 CSS 主色使用 `Resources/style.css` 的 `--app-accent`。新增界面须复用这些定义；图标生成源中的 D、M 颜色保持同步。
 - 正文原始颜色、代码语法高亮及具有独立含义的错误/警告等语义颜色不属于品牌强调色，保持内容含义与可读性。系统管理的菜单、文件选择器等遵循 macOS 外观，不修改用户系统强调色设置。
-- 编辑/预览采用带文字的 macOS 原生分段选择控件，文字及选中态对比度交由系统适配明暗外观；选中块通过原生 selectedSegmentBezelColor 使用主强调色，文字由系统适配，不将深蓝或酒红直接作为深色背景上的选中文字颜色。原生控件优先保证可读性与系统交互一致性。
+- 编辑/预览采用带文字的 macOS 原生分段选择控件，保留原生交互，由 ModeSegmentedControl 显式绘制主色选中块和白色选中文字，未选中文字随系统外观适配；不依赖可能被 macOS 忽略的 tint 或 selectedSegmentBezelColor。原生控件优先保证可读性与系统交互一致性。
 - 修改强调色须检查编辑/预览、标签、侧栏、透明度控件、链接及文本选区，确保明暗外观均能辨认；CSS 改动须重新生成内嵌资源再构建。
 
 ## 每次完成开发时必须执行
