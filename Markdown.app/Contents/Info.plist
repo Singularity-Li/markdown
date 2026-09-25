@@ -8,11 +8,11 @@
   <key>CFBundleExecutable</key><string>Markdown</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>1.1.0</string>
-  <key>CFBundleVersion</key><string>5</string>
+  <key>CFBundleVersion</key><string>6</string>
   <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>
-  <key>CFBundleIconFile</key><string>AppIcon-33ea8b2bebafb236218b52841ef73c924e62339655cac68ee3117bd63378fe6d</string>
+  <key>CFBundleIconFile</key><string>AppIcon-6f47bd5db12cba8e85ac2738a8e0efc43a843e39db2d031cd2d87697bd6c387a</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
   <key>LSMultipleInstancesProhibited</key><true/>
   <key>NSHumanReadableCopyright</key><string>仅供个人使用</string>
