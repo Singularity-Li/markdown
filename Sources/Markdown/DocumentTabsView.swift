@@ -48,14 +48,9 @@ private struct DocumentTab: View {
     private var titleColor: Color { isSelected ? .primary : .secondary }
     // 与 App 图标中字母 D 使用相同的 sRGB 酒红色（#A63D50）。
     private var selectionColor: Color { AppTheme.accent }
-    private var iconColor: Color { isSelected ? selectionColor : .secondary }
 
     private var tabLabel: some View {
         HStack(spacing: 7) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(iconColor)
-                .frame(width: 12)
             Text(document.displayName)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(titleColor)
