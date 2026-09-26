@@ -51,8 +51,8 @@ private struct DocumentTab: View {
 
     private let indicatorWidth: CGFloat = 10
     private let indicatorPadding: CGFloat = 4
-    private var starGlow: Color {
-        Color(nsColor: AppTheme.secondaryAccentNSColor.blended(withFraction: 0.65, of: .white)
+    private var unsavedColor: Color {
+        Color(nsColor: AppTheme.secondaryAccentNSColor.blended(withFraction: colorScheme == .dark ? 0.6 : 0, of: .white)
               ?? AppTheme.secondaryAccentNSColor)
     }
 
@@ -73,11 +73,10 @@ private struct DocumentTab: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             if document.isDirty {
-                Image(systemName: "asterisk")
-                    .font(.system(size: 7, weight: .bold))
-                    .foregroundStyle(AppTheme.secondaryAccent)
-                    .shadow(color: starGlow.opacity(colorScheme == .dark ? 0.95 : 0.35), radius: 1)
-                    .shadow(color: starGlow.opacity(colorScheme == .dark ? 0.65 : 0.2), radius: 3)
+                RoundedRectangle(cornerRadius: 1, style: .continuous)
+                    .strokeBorder(unsavedColor, lineWidth: contrast == .increased ? 1.5 : 1.2)
+                    .frame(width: 5.5, height: 5.5)
+                    .rotationEffect(.degrees(45))
                     .frame(width: indicatorWidth, height: AppTheme.toolbarControlHeight, alignment: .center)
                     .padding(.horizontal, indicatorPadding)
                     .accessibilityHidden(true)
