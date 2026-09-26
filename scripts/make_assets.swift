@@ -20,10 +20,16 @@ func renderPNG(size: CGFloat, draw: () -> Void) -> Data {
     return rep.representation(using: .png, properties: [:])!
 }
 
-// 纯透明背景与双色 MD 字标，不绘制底板、描边或底板阴影。
+// 不透明浅灰圆角底板与双色 MD 字标；仅底板外侧保留透明留白。
 func iconImage(size: CGFloat) -> Data {
     renderPNG(size: size) {
         NSGraphicsContext.current!.cgContext.clear(CGRect(x: 0, y: 0, width: size, height: size))
+        let plate = NSBezierPath(roundedRect: NSRect(x: size * 0.075, y: size * 0.075,
+                                                     width: size * 0.85, height: size * 0.85),
+                                 xRadius: size * 0.22, yRadius: size * 0.22)
+        NSGradient(starting: NSColor(srgbRed: 0.76, green: 0.76, blue: 0.77, alpha: 1),
+                   ending: NSColor(srgbRed: 0.91, green: 0.91, blue: 0.92, alpha: 1))!
+            .draw(in: plate, angle: 90)
         // Native system lettering, optically centered by its actual glyph bounds.
         let font = NSFont.systemFont(ofSize: size * 0.48, weight: .bold)
         let lettering = NSMutableAttributedString(string: "MD", attributes: [
@@ -37,8 +43,8 @@ func iconImage(size: CGFloat) -> Data {
         let line = CTLineCreateWithAttributedString(lettering)
         let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
         let context = NSGraphicsContext.current!.cgContext
-        // 保留字标四周透明留白，所有尺寸使用同一构图。
-        let scale = size * 0.68 / bounds.width
+        // 字标与截图一致，占底板宽度约六成；所有尺寸使用同一构图。
+        let scale = size * 0.51 / bounds.width
         context.saveGState()
         context.translateBy(x: (size - bounds.width * scale) / 2,
                             y: (size - bounds.height * scale) / 2)

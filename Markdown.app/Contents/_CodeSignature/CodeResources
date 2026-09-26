@@ -4,9 +4,9 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Resources/AppIcon-eb293f7c43b2f89dcac79fcf7c2d45c069977e63c4d94b421d7406c2565b5b7e.icns</key>
+		<key>Resources/AppIcon-fd578328f5de2242809083b30edf777f0bdcf06675fdf93ebd04b6d071c6fe04.icns</key>
 		<data>
-		9olmX0sr+4Kd6cbLLYUXOG0vDY4=
+		Nk+RCUUKlfZuPZydVk2AKAl6BA0=
 		</data>
 		<key>Resources/Sparkle-LICENSE.txt</key>
 		<data>
@@ -24,11 +24,11 @@
 			<key>requirement</key>
 			<string>cdhash H"f5dd2ecf55bde6ee8fc411717a4f912a1d8ea403" or cdhash H"5310630c28d4d1d98aebbe9805df28d52f497255"</string>
 		</dict>
-		<key>Resources/AppIcon-eb293f7c43b2f89dcac79fcf7c2d45c069977e63c4d94b421d7406c2565b5b7e.icns</key>
+		<key>Resources/AppIcon-fd578328f5de2242809083b30edf777f0bdcf06675fdf93ebd04b6d071c6fe04.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			6yk/fEOy+J3Kx5/PfC1FwGmXfmPE2UtCHXQGwlZbW34=
+			/VeDKPXeIkKAkIOzDt93fwvc8GZ1/fk+vQS20HHG/gQ=
 			</data>
 		</dict>
 		<key>Resources/Sparkle-LICENSE.txt</key>
