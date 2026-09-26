@@ -31,7 +31,7 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 
 ![Markdown 阅读模式：Swift 与 Python 代码高亮](docs/images/preview.jpg)
 
-<details>
+<details open>
 <summary><strong>查看编辑模式</strong> · Markdown 源码高亮与即时切换</summary>
 
 ![Markdown 编辑模式：同一文档的源码视图](docs/images/editor.jpg)

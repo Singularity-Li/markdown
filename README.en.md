@@ -31,7 +31,7 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 ![Markdown preview showing Swift and Python syntax highlighting](docs/images/preview.jpg)
 
-<details>
+<details open>
 <summary><strong>See the editor</strong> · Highlighted Markdown source and quick mode switching</summary>
 
 ![Markdown source editor showing the same document](docs/images/editor.jpg)
