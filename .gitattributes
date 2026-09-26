@@ -1,2 +1,8 @@
-# Preserve upstream license text verbatim.
-Markdown.app/Contents/Resources/Sparkle-LICENSE.txt -whitespace
+# Preserve upstream license text, including its original trailing whitespace.
+LICENSES/** whitespace=-blank-at-eol
+Markdown.app/Contents/Resources/LICENSES/** whitespace=-blank-at-eol
+
+# Keep GitHub reviews focused on hand-maintained sources.
+Resources/*.min.js linguist-vendored
+Sources/Markdown/Assets.swift linguist-generated
+Markdown.app/** linguist-generated

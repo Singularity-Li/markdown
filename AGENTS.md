@@ -84,3 +84,10 @@
 - 每个正式 Release 必须包含 `Markdown-X.Y.Z.zip` 和已签名的 `appcast.xml`。先创建草稿、上传并下载校验，再发布为 latest，最后验证匿名下载和 latest 清单入口。不得覆盖已发布附件或强制改写 tag。
 - 失败保留本地提交、草稿及 `dist/releases/vX.Y.Z/state.json`，使用 `python3 scripts/release.py --resume vX.Y.Z` 恢复同一次发布；不要盲目递增版本重发。`--prepare-only` 仅准备，不能据此宣称已发布。
 - 发布完成报告版本、构建号、提交、Release 链接和验证范围。首次支持更新的版本需手动安装；后续才能从 App 一键升级。当前为 ad-hoc 签名，不能声称已 Apple 公证。
+
+## 开源文档与许可
+
+- `README.md` 为中文默认入口，`README.en.md` 为对应英文介绍；用户功能、安装要求与限制保持一致。README 截图最多五张，正式展示图片放入 `docs/images/` 并追踪，调试截图继续忽略。
+- 原创源码、文档和资源按根目录 MIT `LICENSE` 分发；第三方许可保持原文，清单维护于 `THIRD_PARTY_NOTICES.md` 与 `LICENSES/`。依赖更新同步检查许可。
+- 构建必须把项目许可及完整第三方声明放入 App 资源目录，并在签名前完成；验证脚本检查交付包中的许可与源码一致。
+- 贡献说明在 `CONTRIBUTING.md`，安全和隐私说明在 `SECURITY.md`；不要将维护者发布密钥或个人环境写入公开文档。

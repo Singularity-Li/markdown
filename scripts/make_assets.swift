@@ -1,4 +1,4 @@
-// 生成应用图标（iconset）与示例图片 sample.png，供 build_app.sh 使用。
+// 生成应用图标（iconset），供 build_app.sh 使用。
 // 用法：swift scripts/make_assets.swift
 import AppKit
 import CoreText
@@ -55,31 +55,6 @@ func iconImage(size: CGFloat) -> Data {
     }
 }
 
-// 示例图片（渐变 + 文字说明），供相对路径图片测试使用。
-func sampleImage() -> Data {
-    let w = 640, h = 360
-    let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h,
-                               bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
-                               colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
-    NSGraphicsContext.saveGraphicsState()
-    NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
-    let rect = NSRect(x: 0, y: 0, width: w, height: h)
-    NSGradient(colors: [
-        NSColor(calibratedRed: 0.10, green: 0.42, blue: 0.85, alpha: 1),
-        NSColor(calibratedRed: 0.85, green: 0.24, blue: 0.55, alpha: 1)
-    ])!.draw(in: rect, angle: -45)
-    let para = NSMutableParagraphStyle()
-    para.alignment = .center
-    let attrs: [NSAttributedString.Key: Any] = [
-        .font: NSFont.boldSystemFont(ofSize: 44),
-        .foregroundColor: NSColor.white,
-        .paragraphStyle: para
-    ]
-    ("Markdown 图片示例" as NSString).draw(in: NSRect(x: 0, y: h / 2 - 40, width: w, height: 80), withAttributes: attrs)
-    NSGraphicsContext.restoreGraphicsState()
-    return rep.representation(using: .png, properties: [:])!
-}
-
 // 输出 iconset（1x 与 2x）
 let sizes: [(name: String, px: CGFloat)] = [
     ("icon_16x16", 16), ("icon_16x16@2x", 32),
@@ -93,7 +68,4 @@ for s in sizes {
     try! data.write(to: iconset.appendingPathComponent(s.name + ".png"))
 }
 
-let sample = sampleImage()
-try! sample.write(to: dist.appendingPathComponent("sample.png"))
-
-print("已生成 iconset (\(sizes.count) 张) 与 dist/sample.png")
+print("已生成 iconset (\(sizes.count) 张)")

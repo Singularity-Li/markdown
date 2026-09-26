@@ -38,7 +38,7 @@ swift scripts/gen_assets.swift
 echo "==> 2/6 编译 (release, arm64)"
 swift build -c release --arch arm64
 
-echo "==> 3/6 生成图标与示例图片"
+echo "==> 3/6 生成图标"
 swift scripts/make_assets.swift
 # 生成失败直接中止，不能回退使用 dist 中遗留的旧图标。
 iconutil -c icns "$ROOT/dist/Markdown.iconset" -o "$ROOT/dist/Markdown.icns"
@@ -55,6 +55,8 @@ for PART in Headers PrivateHeaders Modules; do
   rm -rf "$REPO_APP/Contents/Frameworks/Sparkle.framework/$PART" "$REPO_APP/Contents/Frameworks/Sparkle.framework/Versions/B/$PART"
 done
 cp "$SPARKLE_ROOT/LICENSE" "$REPO_APP/Contents/Resources/Sparkle-LICENSE.txt"
+cp "$ROOT/LICENSE" "$ROOT/THIRD_PARTY_NOTICES.md" "$REPO_APP/Contents/Resources/"
+cp -R "$ROOT/LICENSES" "$REPO_APP/Contents/Resources/LICENSES"
 
 cat > "$REPO_APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -125,4 +127,3 @@ echo ""
 echo "完成。"
 echo "  仓库 App: $REPO_APP"
 echo "  示例:     $ROOT/Markdown示例.md"
-echo "  示例图片: $ROOT/dist/sample.png"

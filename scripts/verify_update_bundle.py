@@ -25,6 +25,11 @@ def verify(app):
     assert (framework / 'Versions/B/Updater.app/Contents/MacOS/Updater').is_file()
     linkage = subprocess.check_output(['otool', '-L', str(app / 'Contents/MacOS/Markdown')], text=True)
     assert '@rpath/Sparkle.framework/Versions/B/Sparkle' in linkage
+    for relative in ('LICENSE', 'THIRD_PARTY_NOTICES.md',
+                     'LICENSES/marked-MIT.txt', 'LICENSES/highlightjs-BSD-3-Clause.txt',
+                     'LICENSES/Sparkle.txt'):
+        assert (app / 'Contents/Resources' / relative).read_bytes() == (ROOT / relative).read_bytes(), relative
+    print('PASS: 项目与第三方许可完整随 App 分发')
     print('PASS: 自动更新配置、公钥、框架与安装辅助程序完整')
 
 if __name__ == '__main__':

@@ -8,9 +8,29 @@
 		<data>
 		Nk+RCUUKlfZuPZydVk2AKAl6BA0=
 		</data>
+		<key>Resources/LICENSE</key>
+		<data>
+		2iMoO3AiKiFRNSXqiWrp5y0HWZs=
+		</data>
+		<key>Resources/LICENSES/Sparkle.txt</key>
+		<data>
+		mOjbjtiy4MLeRUA1svgpagNeQGQ=
+		</data>
+		<key>Resources/LICENSES/highlightjs-BSD-3-Clause.txt</key>
+		<data>
+		AJkNrT8o9VA/rZg1vXKRUkMBV0w=
+		</data>
+		<key>Resources/LICENSES/marked-MIT.txt</key>
+		<data>
+		uUImk6Qqckz8it4M+HfJDDwMqJo=
+		</data>
 		<key>Resources/Sparkle-LICENSE.txt</key>
 		<data>
 		mOjbjtiy4MLeRUA1svgpagNeQGQ=
+		</data>
+		<key>Resources/THIRD_PARTY_NOTICES.md</key>
+		<data>
+		geAr7mbxDwpDOZKdZBVlpn9+BPA=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -31,11 +51,46 @@
 			/VeDKPXeIkKAkIOzDt93fwvc8GZ1/fk+vQS20HHG/gQ=
 			</data>
 		</dict>
+		<key>Resources/LICENSE</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			I1/i0OHyuoYWb2Afr0sNOrlvip+OSbMjmEG6f1YSEbQ=
+			</data>
+		</dict>
+		<key>Resources/LICENSES/Sparkle.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			OJpOTpoy8Fl3WxOgbiWlkURboinSg40m3T58DEUSfP4=
+			</data>
+		</dict>
+		<key>Resources/LICENSES/highlightjs-BSD-3-Clause.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bAgUMVkdnfaWyC3FmP4UI3ZbiimbIA7QCyga/Q9kxJA=
+			</data>
+		</dict>
+		<key>Resources/LICENSES/marked-MIT.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jjo/gvWaYJWPVsoI9EVkfDKkcz3HymwsRvbriYRxq5w=
+			</data>
+		</dict>
 		<key>Resources/Sparkle-LICENSE.txt</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			OJpOTpoy8Fl3WxOgbiWlkURboinSg40m3T58DEUSfP4=
+			</data>
+		</dict>
+		<key>Resources/THIRD_PARTY_NOTICES.md</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LGAyLH85vdGkNxBlLc2EwJQZ99AGYVxh2JuvqvOTasU=
 			</data>
 		</dict>
 	</dict>
