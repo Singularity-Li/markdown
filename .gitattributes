@@ -2,6 +2,8 @@
 LICENSES/** whitespace=-blank-at-eol
 Markdown.app/Contents/Resources/LICENSES/** whitespace=-blank-at-eol
 
+Markdown.app/Contents/Resources/Sparkle-LICENSE.txt -whitespace
+
 # Keep GitHub reviews focused on hand-maintained sources.
 Resources/*.min.js linguist-vendored
 Sources/Markdown/Assets.swift linguist-generated
