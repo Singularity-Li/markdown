@@ -43,7 +43,7 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 1. Download `Markdown-X.Y.Z.zip` from [Releases](https://github.com/Singularity-Li/markdown/releases/latest).
 2. Unzip, move `Markdown.app` to Applications, and launch it once.
-3. Drop in Markdown files or a folder, or press `⌘O`. Use `⇧⌘P` to switch between editing and preview.
+3. Drop in Markdown files or a folder, or press `⌘O`. Use `⌘R` to cycle through Source, Visual, and Preview.
 
 Requires **macOS 26 or later and Apple Silicon**. Releases currently use ad-hoc signing and are not Apple Developer ID signed or notarized. macOS may warn that the developer cannot be verified. Check the download source, or build the app yourself.
 
@@ -55,7 +55,7 @@ Use **Markdown → 检查更新…** to check for updates. See [release notes](h
 | `⌘O` | Open files or a folder |
 | `⌘S` | Save the current document |
 | `⌘W` | Close the current tab |
-| `⇧⌘P` | Switch edit / preview |
+| `⌘R` | Cycle Source → Visual → Preview → Source |
 
 ## Scope and privacy
 

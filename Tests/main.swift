@@ -157,6 +157,17 @@ check(drafts.close(secondDraft.id) && drafts.documents.count == 1, "关闭未命
 let counted = OpenDocument(text: "中 文 Hello 👨‍👩‍👧‍👦\n#")
 check(OpenDocument(text: "<div>HTML</div>").isSourceMode, "原始 HTML 默认进入源码编辑以保护语法")
 check(!OpenDocument(text: "# 标题\n\n- [ ] 任务").isSourceMode, "常见 Markdown 默认进入可视化编辑")
+let modeStore = DocumentStore()
+modeStore.cycleMode()
+check(modeStore.activeDocument == nil, "无文档时快捷键不改变模式")
+let modeDocument = modeStore.newDocument()
+modeDocument.isSourceMode = true
+modeStore.cycleMode()
+check(!modeDocument.isSourceMode && !modeDocument.isPreviewMode, "源码切换到可视化")
+modeStore.cycleMode()
+check(modeDocument.isPreviewMode && !modeDocument.isSourceMode, "可视化切换到预览")
+modeStore.cycleMode()
+check(!modeDocument.isPreviewMode && modeDocument.isSourceMode, "预览切换到源码")
 check(counted.characterCount == 9, "字符统计兼容中英文及组合 emoji，忽略空白")
 counted.text = ""
 check(counted.characterCount == 0, "空文档字符数为零且随编辑更新")

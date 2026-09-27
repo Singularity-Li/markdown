@@ -15,7 +15,7 @@ import AppKit
         else { NSApp.keyWindow?.performClose(nil) }
     }
     @objc func save() { _ = DocumentStore.shared.save() }
-    @objc func toggleMode() { DocumentStore.shared.isPreviewMode.toggle() }
+    @objc func cycleMode() { DocumentStore.shared.cycleMode() }
 }
 
 /// 手工构建主菜单（含 Cmd+S 保存、Cmd+O 打开文件或文件夹）。
@@ -70,7 +70,7 @@ enum MainMenu {
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "显示")
         viewItem.submenu = viewMenu
-        viewMenu.addItem(action(#selector(MenuRouter.toggleMode), title: "切换 预览/编辑", key: "p", modifiers: [.command, .shift]))
+        viewMenu.addItem(action(#selector(MenuRouter.cycleMode), title: "切换显示模式", key: "r", modifiers: .command))
 
         // 窗口菜单
         let windowItem = NSMenuItem()

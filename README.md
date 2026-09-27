@@ -43,7 +43,7 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 
 1. 在 [Releases](https://github.com/Singularity-Li/markdown/releases/latest) 下载 `Markdown-X.Y.Z.zip`。
 2. 解压后将 `Markdown.app` 放入“应用程序”，启动一次。
-3. 拖入 Markdown 文件或文件夹，或按 `⌘O` 打开；按 `⇧⌘P` 切换编辑与预览。
+3. 拖入 Markdown 文件或文件夹，或按 `⌘O` 打开；按 `⌘R` 在源码、可视化和预览之间循环切换。
 
 需要 **macOS 26 或更新版本、Apple Silicon 芯片**。当前发行包采用 ad-hoc 签名，尚未经过 Apple Developer ID 签名或公证，macOS 可能提示无法验证开发者。请确认下载来源；也可以自行从源码构建。
 
@@ -55,7 +55,7 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 | `⌘O` | 打开文件或文件夹 |
 | `⌘S` | 保存当前文档 |
 | `⌘W` | 关闭当前标签 |
-| `⇧⌘P` | 切换编辑 / 预览 |
+| `⌘R` | 源码 → 可视化 → 预览 → 源码 |
 
 ## 支持范围
 

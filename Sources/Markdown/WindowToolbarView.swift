@@ -98,7 +98,7 @@ struct WindowToolbarView: View {
                 set: { store.activeDocument?.isSourceMode = $0 }
             ), isEnabled: store.activeDocument?.isSupported == true)
             .frame(width: 174, height: AppTheme.toolbarControlHeight)
-            .help("切换源码、可视化或预览（⌘⇧P 切换预览）")
+            .help("切换源码、可视化或预览（⌘R 循环切换）")
             .disabled(store.activeDocument?.isSupported != true)
             .accessibilityElement(children: .contain)
             .accessibilityLabel("阅读模式")

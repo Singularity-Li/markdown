@@ -80,6 +80,18 @@ final class DocumentStore {
             document.isPreviewMode = newValue
         }
     }
+    /// 按工具栏从左到右的顺序循环三种模式。
+    func cycleMode() {
+        guard let document = activeDocument, document.isSupported else { return }
+        if document.isPreviewMode {
+            document.isSourceMode = true
+            document.isPreviewMode = false
+        } else if document.isSourceMode {
+            document.isSourceMode = false
+        } else {
+            document.isPreviewMode = true
+        }
+    }
     var displayTitle: String { activeDocument?.displayName ?? folderRoot?.lastPathComponent ?? "Markdown" }
     var hasLoadedDocument: Bool { activeDocument != nil }
 
