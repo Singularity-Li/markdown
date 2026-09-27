@@ -24,6 +24,8 @@ func check(_ passed: Bool, _ message: String) {
     if !passed { failures += 1 }
 }
 let originalY = scroll.contentView.bounds.minY
+check(text.insertionPointColor == .textColor, "源码编辑光标使用系统文字颜色")
+check(text.selectedTextAttributes[.backgroundColor] as? NSColor == .selectedTextBackgroundColor, "源码编辑选区使用系统颜色")
 check(originalY > 1000, "长文档编辑器已定位中部")
 for _ in 0..<5 {
     let before = scroll.contentView.bounds.minY

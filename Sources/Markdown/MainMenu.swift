@@ -16,6 +16,7 @@ import AppKit
     }
     @objc func save() { _ = DocumentStore.shared.save() }
     @objc func cycleMode() { DocumentStore.shared.cycleMode() }
+    @objc func selectTab(_ sender: NSMenuItem) { DocumentStore.shared.activateTab(at: sender.tag - 1) }
 }
 
 /// 手工构建主菜单（含 Cmd+S 保存、Cmd+O 打开文件或文件夹）。
@@ -78,6 +79,12 @@ enum MainMenu {
         let windowMenu = NSMenu(title: "窗口")
         windowItem.submenu = windowMenu
         windowMenu.addItem(NSMenuItem(title: "最小化", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m"))
+        windowMenu.addItem(.separator())
+        for number in 1...9 {
+            let item = action(#selector(MenuRouter.selectTab(_:)), title: "选择第 \(number) 个标签页", key: "\(number)", modifiers: .command)
+            item.tag = number
+            windowMenu.addItem(item)
+        }
         NSApp.windowsMenu = windowMenu
 
         return main

@@ -14,6 +14,14 @@ try "# 原文".write(to: file, atomically: true, encoding: .utf8)
 try "# 下一篇".write(to: next, atomically: true, encoding: .utf8)
 let store = DocumentStore()
 check(!store.showsSidebar && store.documents.isEmpty, "启动无标签且隐藏侧栏")
+let tabStore = DocumentStore()
+let numberedTabs = (1...3).map { _ in tabStore.newDocument().id }
+for index in 0..<3 {
+    tabStore.activateTab(at: index)
+    check(tabStore.activeID == numberedTabs[index], "快捷键序号 \(index + 1) 选择对应标签")
+}
+tabStore.activateTab(at: 8)
+check(tabStore.activeID == numberedTabs[2], "超出已打开标签数量时保持当前标签")
 store.handleOpen(file)
 check(store.selectedURL == file && !store.showsSidebar, "直接打开文件同步选择且不展示侧栏")
 store.openFile(root.appendingPathComponent("missing.md"))

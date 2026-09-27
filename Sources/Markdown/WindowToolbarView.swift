@@ -115,6 +115,7 @@ struct WindowToolbarView: View {
 private struct CompactToolbarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .foregroundStyle(Color.primary)
             .frame(width: 34, height: AppTheme.toolbarControlHeight)
             .contentShape(Rectangle())
             .glassEffect(.regular, in: RoundedRectangle(cornerRadius: AppTheme.toolbarCornerRadius))

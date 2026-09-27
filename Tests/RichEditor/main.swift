@@ -26,6 +26,7 @@ for name in ["ready", "error", "markdownChanged", "viewport", "imageUpload", "co
     configuration.userContentController.add(bridge, name: name)
 }
 let web = WKWebView(frame: NSRect(x: 0, y: 0, width: 800, height: 650), configuration: configuration)
+web.appearance = NSAppearance(named: .aqua)
 let window = NSWindow(contentRect: web.frame, styleMask: [.titled], backing: .buffered, defer: false)
 window.contentView = web
 window.makeKeyAndOrderFront(nil)
@@ -77,6 +78,20 @@ _ = evaluate("(function(){ var p=document.querySelector('.ProseMirror > p:last-c
 check(until({ (evaluate("document.body.innerText.includes('文字与标题')") as? Bool) == true }, seconds: 2), "斜线菜单显示分类")
 check((evaluate("document.body.innerText.includes('列表与任务') && document.body.innerText.includes('插入内容')") as? Bool) == true, "斜线菜单包含列表和插入分类")
 check((evaluate("document.body.innerText.includes('行内格式') && document.body.innerText.includes('行内代码')") as? Bool) == true, "斜线菜单包含行内格式分类")
+let tabState = "(function(){let tabs=[...document.querySelectorAll('.milkdown-slash-menu .tab-group li')];return [tabs.length,tabs.findIndex(t=>t.classList.contains('selected'))]})()"
+let initialTab = evaluate(tabState) as? [Int] ?? []
+let tabCount = max(1, initialTab.first ?? 0)
+let selectedTab = initialTab.last ?? -1
+check(initialTab.count == 2 && tabCount > 1 && selectedTab >= 0, "斜线菜单提供多个分类选项卡")
+check((evaluate("getComputedStyle(document.querySelector('.milkdown-slash-menu svg')).color") as? String) == "rgb(0, 0, 0)", "浅色外观的输入图标为黑色")
+_ = evaluate("document.querySelector('.ProseMirror').dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}))")
+check((evaluate(tabState) as? [Int])?.last == (selectedTab + 1) % tabCount, "Tab 切换到下一分类")
+_ = evaluate("document.querySelector('.ProseMirror').dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',shiftKey:true,bubbles:true,cancelable:true}))")
+check((evaluate(tabState) as? [Int])?.last == selectedTab, "Shift+Tab 切换到上一分类")
+for _ in 0..<tabCount {
+    _ = evaluate("document.querySelector('.ProseMirror').dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}))")
+}
+check((evaluate(tabState) as? [Int])?.last == selectedTab, "Tab 在分类之间循环")
 check(until({ bridge.changes.contains(where: { $0.contains("/") }) }, seconds: 2), "编辑内容写回 Markdown")
 _ = evaluate("document.execCommand('insertText', false, '代码')")
 check(until({ (evaluate("document.body.innerText.includes('代码块')") as? Bool) == true }, seconds: 2), "输入中文可筛选斜线命令")
@@ -115,6 +130,7 @@ web.loadHTMLString(html.replacingOccurrences(of: encoded, with: ""), baseURL: ni
 check(until({ bridge.ready }), "空白可视化文档启动")
 _ = evaluate("(function(){ var p=document.querySelector('.ProseMirror > p:last-child'); var r=document.createRange(); r.selectNodeContents(p); r.collapse(true); var s=getSelection(); s.removeAllRanges(); s.addRange(r); document.querySelector('.ProseMirror').focus(); return document.execCommand('insertText',false,'/dmk'); })()")
 check(until({ (evaluate("Array.from(document.querySelectorAll('.milkdown-slash-menu .menu-groups li')).some(n => n.textContent.trim() === '代码块')") as? Bool) == true }, seconds: 2), "代码块拼音首字母可筛选且菜单仍显示中文")
+check((evaluate("getComputedStyle(document.querySelector('.milkdown-slash-menu svg')).color") as? String) == "rgb(255, 255, 255)", "深色外观的输入图标为白色")
 _ = evaluate("(function(){ for (var i=0;i<3;i++) document.execCommand('delete'); return document.execCommand('insertText', false, 'daimakuai'); })()")
 check(until({ (evaluate("Array.from(document.querySelectorAll('.milkdown-slash-menu .menu-groups li')).some(n => n.textContent.trim() === '代码块')") as? Bool) == true }, seconds: 2), "代码块完整拼音可筛选")
 _ = evaluate("window.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowDown', bubbles:true}))")

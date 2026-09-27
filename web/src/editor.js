@@ -96,6 +96,18 @@ window.markdownImageUploadResult = (id, path, error) => {
   else pending.resolve(path);
 };
 
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Tab' || event.altKey || event.ctrlKey || event.metaKey) return;
+  const menu = document.querySelector('.milkdown-slash-menu[data-show="true"]');
+  const tabs = [...(menu?.querySelectorAll('.tab-group li') ?? [])];
+  if (!tabs.length) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const current = tabs.findIndex((tab) => tab.classList.contains('selected'));
+  const next = (current + (event.shiftKey ? -1 : 1) + tabs.length) % tabs.length;
+  tabs[next].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+}, { capture: true });
+
 window.startMarkdownEditor = async (markdown, sourceOffset) => {
   for (const event of ['beforeinput', 'keydown', 'pointerdown', 'paste', 'drop', 'cut']) {
     document.addEventListener(event, () => { userInteracted = true; }, { capture: true });

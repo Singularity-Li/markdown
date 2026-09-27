@@ -181,6 +181,11 @@ final class DocumentStore {
         activeID = id
     }
 
+    func activateTab(at index: Int) {
+        guard documents.indices.contains(index) else { return }
+        activate(documents[index].id)
+    }
+
     func updateText(_ text: String) {
         guard let document = activeDocument, document.isSupported else { return }
         document.text = text

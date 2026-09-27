@@ -10,19 +10,25 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
   --crepe-color-on-surface: #222;
   --crepe-color-on-surface-variant: #555;
   --crepe-color-outline: #aaa;
-  --crepe-color-primary: #a63d50;
+  --crepe-color-primary: #222;
+  --editor-icon-color: #000;
   --crepe-color-secondary: #eee;
   --crepe-color-on-secondary: #222;
-  --crepe-color-hover: #f1e8ea;
-  --crepe-color-selected: #eedde0;
+  --crepe-color-hover: #f1f1f1;
+  --crepe-color-selected: #dedede;
   --crepe-color-inline-area: #f4f4f4;
   --crepe-font-title: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   --crepe-font-default: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   background: transparent !important;
 }
-.milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; caret-color: #a63d50; }
-.milkdown .ProseMirror ::selection { background: rgba(166, 61, 80, .25); }
+.milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; caret-color: currentColor; }
+.milkdown .ProseMirror ::selection { background: rgba(128, 128, 128, .28); }
 .milkdown .ProseMirror a { color: #0969da; }
+.milkdown input[type="checkbox"] { accent-color: #0969da; }
+.milkdown :is(button, .milkdown-slash-menu, .milkdown-icon) svg { color: var(--editor-icon-color) !important; }
+.milkdown :is(button, .milkdown-slash-menu, .milkdown-icon) svg:not([fill="none"]),
+.milkdown :is(button, .milkdown-slash-menu, .milkdown-icon) svg [fill]:not([fill="none"]) { fill: currentColor !important; }
+.milkdown :is(button, .milkdown-slash-menu, .milkdown-icon) svg [stroke]:not([stroke="none"]) { stroke: currentColor !important; }
 .milkdown .ProseMirror img { max-width: 100%; }
 .milkdown .crepe-slash-menu { max-height: min(60vh, 490px); overflow-y: auto; }
 .milkdown .milkdown-code-block { border-radius: 10px; padding: 8px 14px 16px; }
@@ -58,10 +64,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
 }
 .milkdown .milkdown-code-block .cm-lineNumbers .cm-gutterElement:not(:first-child) { min-height: 22.4px; }
 .milkdown .milkdown-code-block .cm-lineNumbers .cm-activeLineGutter {
-  background: linear-gradient(to right, transparent 3px, rgba(166,61,80,.15) 3px, rgba(166,61,80,.15) calc(100% - 3px), transparent calc(100% - 3px)) center / 100% calc(100% - 6px) no-repeat !important;
+  background: linear-gradient(to right, transparent 3px, rgba(128,128,128,.15) 3px, rgba(128,128,128,.15) calc(100% - 3px), transparent calc(100% - 3px)) center / 100% calc(100% - 6px) no-repeat !important;
   border-radius: 4px;
 }
 .milkdown .milkdown-code-block[data-code-theme="dark"] {
+  --editor-icon-color: #fff;
   --crepe-color-surface: #1f2329;
   --crepe-color-surface-low: #303741;
   --crepe-color-secondary: #343b45;
@@ -75,10 +82,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
 .milkdown .milkdown-code-block[data-code-theme="dark"] .cm-content,
 .milkdown .milkdown-code-block[data-code-theme="dark"] .cm-gutters { color: #eef0f3; }
 .milkdown .milkdown-code-block[data-code-theme="dark"] .cm-lineNumbers .cm-activeLineGutter {
-  background-image: linear-gradient(to right, transparent 3px, rgba(166,61,80,.34) 3px, rgba(166,61,80,.34) calc(100% - 3px), transparent calc(100% - 3px)) !important;
+  background-image: linear-gradient(to right, transparent 3px, rgba(128,128,128,.34) 3px, rgba(128,128,128,.34) calc(100% - 3px), transparent calc(100% - 3px)) !important;
 }
-.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-cursor { border-left-color: #a63d50; }
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-cursor { border-left-color: currentColor; }
 .milkdown .milkdown-code-block[data-code-theme="light"] {
+  --editor-icon-color: #000;
   --crepe-color-surface: #f6f8fa;
   --crepe-color-surface-low: #e8ebef;
   --crepe-color-secondary: #e8ebef;
@@ -98,12 +106,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
     --crepe-color-on-surface: #eee;
     --crepe-color-on-surface-variant: #bbb;
     --crepe-color-outline: #777;
-    --crepe-color-primary: #a63d50;
+    --crepe-color-primary: #eee;
+    --editor-icon-color: #fff;
     --crepe-color-secondary: #3b3b3b;
     --crepe-color-on-secondary: #eee;
-    --crepe-color-hover: #433237;
-    --crepe-color-selected: #50333a;
+    --crepe-color-hover: #383838;
+    --crepe-color-selected: #4b4b4b;
     --crepe-color-inline-area: #353535;
   }
   .milkdown .ProseMirror a { color: #58a6ff; }
+  .milkdown input[type="checkbox"] { accent-color: #58a6ff; }
 }

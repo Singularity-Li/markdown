@@ -20,7 +20,7 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 - **Native glass interface** — Liquid Glass, adjustable background opacity, system light and dark appearance, and a compact toolbar.
 - **Read and edit** — The toolbar offers Source, Visual, and Preview modes. The visual editor renders headings, lists, tables, images, and code blocks while you edit. Preview switching approximately preserves your position.
-- **Insert with `/`** — Type a slash in the visual editor to choose grouped commands. Search by Chinese name, pinyin, or pinyin initials, then select with arrow keys and Enter.
+- **Insert with `/`** — Type a slash in the visual editor for grouped commands. Search by Chinese name or pinyin, switch groups with Tab, and choose with arrow keys and Enter.
 - **Code block tools** — Switch individual visual editor code blocks between light and dark. Copy highlighted rich text from code blocks in the visual editor or preview, with plain text also available to paste targets.
 - **Multiple documents** — Tabs, multi-file selection, batch drag and drop, and folder navigation. Each document keeps its own mode and unsaved state.
 - **Everyday Markdown** — Tables, task lists, highlighted code, images, quotations, heading links, custom HTML anchors, and relative image paths.
@@ -55,6 +55,7 @@ Use **Markdown → 检查更新…** to check for updates. See [release notes](h
 | `⌘O` | Open files or a folder |
 | `⌘S` | Save the current document |
 | `⌘W` | Close the current tab |
+| `⌘1`–`⌘9` | Switch to the tab at that position |
 | `⌘R` | Cycle Source → Visual → Preview → Source |
 
 ## Scope and privacy
