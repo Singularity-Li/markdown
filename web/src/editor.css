@@ -23,7 +23,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
   background: transparent !important;
 }
 .milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; }
-.milkdown .ProseMirror-focused { --prosemirror-virtual-cursor-color: currentColor; }
 .milkdown .ProseMirror ::selection { background: rgba(128, 128, 128, .28); }
 .milkdown .ProseMirror a { color: #0969da; }
 .milkdown input[type="checkbox"] { accent-color: #0969da; }

@@ -117,6 +117,7 @@ window.startMarkdownEditor = async (markdown, sourceOffset) => {
     defaultValue: markdown,
     features: { [CrepeFeature.Latex]: false, [CrepeFeature.TopBar]: false, [CrepeFeature.AI]: false },
     featureConfigs: {
+      [CrepeFeature.Cursor]: { virtual: false },
       [CrepeFeature.Placeholder]: { text: '输入内容，或键入 / 插入内容' },
       [CrepeFeature.BlockEdit]: {
         buildMenu: (builder) => {
