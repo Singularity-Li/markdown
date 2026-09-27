@@ -128,6 +128,12 @@ def download(url, path):
         '--proto-redir', '=https', '--output', path, url)
 
 
+def download_asset_api(url, path):
+    with path.open('wb') as output:
+        subprocess.run(['gh', 'api', url, '-H', 'Accept: application/octet-stream'],
+                       cwd=ROOT, check=True, stdout=output)
+
+
 def preflight():
     clean_tree()
     # 仓库写死以避免误发布到 fork 或其他 remote。
@@ -172,7 +178,7 @@ def prepare(args, branch):
         feeds = [a for a in item['assets'] if a['name'] == 'appcast.xml']
         if feeds:
             previous = directory / 'previous-appcast.xml'
-            download(feeds[0]['browser_download_url'], previous)
+            download_asset_api(feeds[0]['url'], previous)
             run(TOOLS / 'sign_update', '--account', ACCOUNT, '--verify', previous)
             for node in ET.fromstring(previous.read_bytes()).iter('{' + SPARKLE_NS + '}version'):
                 build = max(build, int(node.text) + 1)
