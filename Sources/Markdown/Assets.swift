@@ -1309,16 +1309,15 @@ pre {
   background: rgba(128,128,128,0.13);
   border: 1px solid rgba(128,128,128,0.15);
   border-radius: 12px;
-  padding: 14px 16px;
+  padding: 14px 46px 14px 16px;
   overflow: auto;
   line-height: 1.5;
 }
 pre code { background: transparent; padding: 0; }
 .code-copy-button {
-  position: sticky;
-  left: 100%;
-  float: right;
-  margin: -6px -8px 2px 8px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
   width: 26px;
   height: 26px;
   display: grid;
@@ -1421,8 +1420,7 @@ img { max-width: 100%; border-radius: 10px; display: block; margin: 0.5em 0; }
         highlighted = Array.from(content.childNodes).map(inlineHighlight).join('');
       }
     } catch (_) { /* Unsupported languages still copy as a formatted code block. */ }
-    const heading = label ? `<div style="font:12px -apple-system,sans-serif;color:#57606a;margin-bottom:6px">${escapeHTML(label)}</div>` : '';
-    const html = `${heading}<pre style="font:13px/1.5 Menlo,monospace;white-space:pre-wrap;background:#f6f8fa;color:#24292f;padding:12px;border-radius:8px"><code>${highlighted}</code></pre>`;
+    const html = `<pre style="font:13px/1.5 Menlo,monospace;white-space:pre-wrap;background:#f6f8fa;color:#24292f;padding:12px;border-radius:8px"><code>${highlighted}</code></pre>`;
     window.webkit?.messageHandlers.copyCode?.postMessage({ text: code, html });
   };
 })();

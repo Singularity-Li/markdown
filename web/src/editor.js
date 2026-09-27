@@ -35,6 +35,12 @@ function decorateEditor() {
   });
   document.querySelectorAll('.milkdown-code-block').forEach((block) => {
     const group = block.querySelector('.tools-button-group');
+    const copyButton = group?.querySelector('.copy-button');
+    if (copyButton && !copyButton.hasAttribute('aria-label')) {
+      copyButton.setAttribute('aria-label', '复制带格式代码');
+      copyButton.title = '复制带格式代码';
+    }
+    if (copyButton && group.lastElementChild !== copyButton) group.appendChild(copyButton);
     if (!group || group.querySelector('.code-theme-button')) return;
     const button = document.createElement('button');
     button.type = 'button';

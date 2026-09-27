@@ -32,6 +32,7 @@ final class PreviewCheck: NSObject, WKNavigationDelegate {
                 ['中英文链接均有目标', Array.from(content.querySelectorAll('a[href^="#"]')).every(a => document.getElementById(decodeURIComponent(a.hash.slice(1))))],
                 ['渲染无脚本错误', window.__mdErrors.length === 0]
                 ,['代码块提供复制按钮', content.querySelector('pre .code-copy-button') !== null]
+                ,['复制图标固定在代码块右上角', (() => { const pre=content.querySelector('pre'), button=pre.querySelector('.code-copy-button'), a=pre.getBoundingClientRect(), b=button.getBoundingClientRect(); return getComputedStyle(button).position==='absolute' && a.right-b.right <= 12 && b.top-a.top <= 12; })()]
             ];
         })()
         """) { result, error in

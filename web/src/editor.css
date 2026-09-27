@@ -25,26 +25,70 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
 .milkdown .ProseMirror a { color: #0969da; }
 .milkdown .ProseMirror img { max-width: 100%; }
 .milkdown .crepe-slash-menu { max-height: min(60vh, 490px); overflow-y: auto; }
-.milkdown .milkdown-code-block { border-radius: 10px; }
+.milkdown .milkdown-code-block { border-radius: 10px; padding: 8px 14px 16px; }
+.milkdown .milkdown-code-block .tools { min-height: 30px; justify-content: flex-end; align-items: flex-start; }
+.milkdown .milkdown-code-block .tools .language-button { margin-bottom: 0; }
+.milkdown .milkdown-code-block .tools .language-button,
+.milkdown .milkdown-code-block .tools .tools-button-group > button { opacity: 1 !important; }
+.milkdown .milkdown-code-block .tools .tools-button-group { margin-left: auto; gap: 4px; }
+.milkdown .milkdown-code-block .tools .tools-button-group > button {
+  width: 26px;
+  height: 26px;
+  padding: 5px !important;
+  border-radius: 6px !important;
+}
+.milkdown .milkdown-code-block .tools .tools-button-group .copy-button {
+  font-size: 0;
+  gap: 0;
+}
+.milkdown .milkdown-code-block .tools .tools-button-group .copy-button svg {
+  width: 16px;
+  height: 16px;
+}
+.milkdown .milkdown-code-block .cm-gutters { min-width: 0; padding: 4px 0 0; }
+.milkdown .milkdown-code-block .cm-foldGutter { display: none !important; }
+.milkdown .milkdown-code-block .cm-lineNumbers .cm-gutterElement {
+  min-width: 27px !important;
+  padding: 0 4px 0 2px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: inherit;
+}
+.milkdown .milkdown-code-block .cm-lineNumbers .cm-gutterElement:not(:first-child) { min-height: 22.4px; }
+.milkdown .milkdown-code-block .cm-lineNumbers .cm-activeLineGutter {
+  background: linear-gradient(to right, transparent 3px, rgba(166,61,80,.15) 3px, rgba(166,61,80,.15) calc(100% - 3px), transparent calc(100% - 3px)) center / 100% calc(100% - 6px) no-repeat !important;
+  border-radius: 4px;
+}
 .milkdown .milkdown-code-block[data-code-theme="dark"] {
   --crepe-color-surface: #1f2329;
+  --crepe-color-surface-low: #303741;
   --crepe-color-secondary: #343b45;
   --crepe-color-on-surface: #eef0f3;
   --crepe-color-on-surface-variant: #c9d0d8;
+  --crepe-color-outline: #8b949e;
+  --crepe-color-hover: #3a424d;
   color: #eef0f3;
 }
 .milkdown .milkdown-code-block[data-code-theme="dark"] .cm-editor,
-.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-content { color: #eef0f3; }
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-content,
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-gutters { color: #eef0f3; }
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-lineNumbers .cm-activeLineGutter {
+  background-image: linear-gradient(to right, transparent 3px, rgba(166,61,80,.34) 3px, rgba(166,61,80,.34) calc(100% - 3px), transparent calc(100% - 3px)) !important;
+}
 .milkdown .milkdown-code-block[data-code-theme="dark"] .cm-cursor { border-left-color: #a63d50; }
 .milkdown .milkdown-code-block[data-code-theme="light"] {
   --crepe-color-surface: #f6f8fa;
+  --crepe-color-surface-low: #e8ebef;
   --crepe-color-secondary: #e8ebef;
   --crepe-color-on-surface: #24292f;
   --crepe-color-on-surface-variant: #57606a;
+  --crepe-color-outline: #8c959f;
+  --crepe-color-hover: #dfe3e8;
   color: #24292f;
 }
-.milkdown .milkdown-code-block .code-theme-button { opacity: .75 !important; width: 28px; padding: 4px !important; }
-.milkdown .milkdown-code-block .code-theme-button:hover { opacity: 1 !important; }
+.milkdown .milkdown-code-block .code-theme-button:hover { background: var(--crepe-color-hover); }
 @media (prefers-color-scheme: dark) {
   .milkdown {
     --crepe-color-background: transparent;

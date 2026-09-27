@@ -32,8 +32,7 @@
         highlighted = Array.from(content.childNodes).map(inlineHighlight).join('');
       }
     } catch (_) { /* Unsupported languages still copy as a formatted code block. */ }
-    const heading = label ? `<div style="font:12px -apple-system,sans-serif;color:#57606a;margin-bottom:6px">${escapeHTML(label)}</div>` : '';
-    const html = `${heading}<pre style="font:13px/1.5 Menlo,monospace;white-space:pre-wrap;background:#f6f8fa;color:#24292f;padding:12px;border-radius:8px"><code>${highlighted}</code></pre>`;
+    const html = `<pre style="font:13px/1.5 Menlo,monospace;white-space:pre-wrap;background:#f6f8fa;color:#24292f;padding:12px;border-radius:8px"><code>${highlighted}</code></pre>`;
     window.webkit?.messageHandlers.copyCode?.postMessage({ text: code, html });
   };
 })();
