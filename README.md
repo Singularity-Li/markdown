@@ -29,13 +29,13 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 
 **阅读模式** · 内置代码高亮，专注正文。
 
-![Markdown 阅读模式：Swift 与 Python 代码高亮](docs/images/preview.jpg)
+![Markdown 阅读模式：Swift 与 Python 代码高亮](docs/images/preview.png)
 
 **编辑模式** · Markdown 源码高亮与即时切换
 
-![Markdown 编辑模式：同一文档的源码视图](docs/images/editor.jpg)
+![Markdown 编辑模式：同一文档的源码视图](docs/images/editor.png)
 
-<sub>两张截图均来自根目录 App 实际运行，使用仓库示例文档；点击图片可查看原始分辨率。</sub>
+<sub>两张图片分别展示示例文档的阅读与编辑模式；点击图片可查看原始分辨率。</sub>
 
 ## 下载与开始
 

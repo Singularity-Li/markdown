@@ -29,13 +29,13 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 **Preview** · Built-in code highlighting with room for your content.
 
-![Markdown preview showing Swift and Python syntax highlighting](docs/images/preview.jpg)
+![Markdown preview showing Swift and Python syntax highlighting](docs/images/preview.png)
 
 **Editor** · Highlighted Markdown source and quick mode switching
 
-![Markdown source editor showing the same document](docs/images/editor.jpg)
+![Markdown source editor showing the same document](docs/images/editor.png)
 
-<sub>Both screenshots show the actual root App with the repository's sample document. Open an image for its full resolution.</sub>
+<sub>The images show the sample document in preview and edit modes. Open an image for its full resolution.</sub>
 
 ## Get started
 
