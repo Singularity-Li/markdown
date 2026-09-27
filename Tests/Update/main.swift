@@ -23,6 +23,13 @@ func expect(_ condition: @autoclosure () -> Bool, _ message: String) {
 }
 let updateCoordinator = AppUpdater()
 let updater = SPUUpdater(hostBundle: bundle, applicationBundle: bundle, userDriver: driver, delegate: updateCoordinator)
+expect(updateCoordinator.supportsGentleScheduledUpdateReminders, "自动检查接管未聚焦的更新提示")
+updateCoordinator.queueScheduledUpdate()
+expect(updateCoordinator.isScheduledUpdatePending, "后台发现更新时保存待提示状态")
+updateCoordinator.presentPendingUpdateIfNeeded()
+expect(updateCoordinator.isScheduledUpdatePending, "App 未激活时保留待提示状态")
+updateCoordinator.standardUserDriverWillFinishUpdateSession()
+expect(!updateCoordinator.isScheduledUpdatePending, "更新会话结束后清除待提示状态")
 expect(!updateCoordinator.isRelaunchingForUpdate, "普通退出不生成更新恢复记录")
 updateCoordinator.updaterWillRelaunchApplication(updater)
 expect(updateCoordinator.isRelaunchingForUpdate, "Sparkle 重启回调启用文件恢复，取消退出后仍允许再次尝试")

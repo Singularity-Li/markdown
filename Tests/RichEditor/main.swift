@@ -66,6 +66,7 @@ func check(_ condition: Bool, _ name: String) {
 }
 check(until({ bridge.ready }), "离线可视化编辑器启动")
 check(bridge.error == nil, "无 JavaScript 初始化错误：\(bridge.error ?? "")")
+check((evaluate("getComputedStyle(document.querySelector('.milkdown')).getPropertyValue('--crepe-color-inline-code').trim()") as? String) == "#222", "浅色行内代码使用中性文字颜色")
 RunLoop.current.run(until: Date().addingTimeInterval(0.4))
 check(bridge.changes.isEmpty, "打开文档不会自行改写 Markdown")
 _ = evaluate("document.querySelector('.ProseMirror').dispatchEvent(new PointerEvent('pointerdown', {bubbles:true}))")
@@ -73,6 +74,7 @@ RunLoop.current.run(until: Date().addingTimeInterval(0.25))
 check(bridge.changes.isEmpty, "仅聚焦编辑器不会改写 Markdown")
 check((evaluate("document.querySelectorAll('.ProseMirror h1').length") as? Int) == 1, "标题直接排版")
 check((evaluate("document.querySelectorAll('.ProseMirror table.children').length") as? Int) == 1, "表格直接排版")
+check((evaluate("(function(){let e=document.querySelector('.ProseMirror');return e.classList.contains('virtual-cursor-enabled') && getComputedStyle(e).caretColor==='rgba(0, 0, 0, 0)'})()") as? Bool) == true, "虚拟光标启用时隐藏原生光标")
 check((evaluate("document.querySelectorAll('.ProseMirror .unchecked').length") as? Int ?? 0) > 0, "复选框直接排版")
 _ = evaluate("(function(){ var p=document.querySelector('.ProseMirror > p:last-child'); var r=document.createRange(); r.selectNodeContents(p); r.collapse(true); var s=getSelection(); s.removeAllRanges(); s.addRange(r); document.querySelector('.ProseMirror').focus(); return document.execCommand('insertText',false,'/'); })()")
 check(until({ (evaluate("document.body.innerText.includes('文字与标题')") as? Bool) == true }, seconds: 2), "斜线菜单显示分类")
@@ -123,6 +125,7 @@ check((evaluate("(function(){var b=document.querySelector('.milkdown-code-block'
 web.appearance = NSAppearance(named: .darkAqua)
 check(until({ (evaluate("matchMedia('(prefers-color-scheme: dark)').matches") as? Bool) == true }, seconds: 2), "编辑区跟随系统深色外观")
 check((evaluate("getComputedStyle(document.querySelector('.milkdown')).getPropertyValue('--crepe-color-on-surface').trim()") as? String) == "#eee", "深色外观文字保持可读")
+check((evaluate("getComputedStyle(document.querySelector('.milkdown')).getPropertyValue('--crepe-color-inline-code').trim()") as? String) == "#eee", "深色行内代码跟随正文外观")
 check((evaluate("typeof window.markdownImageUploadResult") as? String) == "function", "图片上传回调可用")
 bridge.ready = false
 bridge.changes.removeAll()

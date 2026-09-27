@@ -17,11 +17,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
   --crepe-color-hover: #f1f1f1;
   --crepe-color-selected: #dedede;
   --crepe-color-inline-area: #f4f4f4;
+  --crepe-color-inline-code: #222;
   --crepe-font-title: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   --crepe-font-default: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
   background: transparent !important;
 }
-.milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; caret-color: currentColor; }
+.milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; }
+.milkdown .ProseMirror-focused { --prosemirror-virtual-cursor-color: currentColor; }
 .milkdown .ProseMirror ::selection { background: rgba(128, 128, 128, .28); }
 .milkdown .ProseMirror a { color: #0969da; }
 .milkdown input[type="checkbox"] { accent-color: #0969da; }
@@ -113,6 +115,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
     --crepe-color-hover: #383838;
     --crepe-color-selected: #4b4b4b;
     --crepe-color-inline-area: #353535;
+    --crepe-color-inline-code: #eee;
   }
   .milkdown .ProseMirror a { color: #58a6ff; }
   .milkdown input[type="checkbox"] { accent-color: #58a6ff; }

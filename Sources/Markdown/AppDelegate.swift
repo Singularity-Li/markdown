@@ -20,6 +20,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        AppUpdater.shared.presentPendingUpdateIfNeeded()
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if AppUpdater.shared.isRelaunchingForUpdate {
             if DocumentStore.shared.prepareUpdateRestart(alreadyApproved: didApproveWindowClose) {

@@ -49,9 +49,9 @@ final class UpdateUserDriver: SPUStandardUserDriver {
     }
 }
 
-final class AppUpdater: NSObject, NSMenuItemValidation, SPUUpdaterDelegate {
+final class AppUpdater: NSObject, NSMenuItemValidation, SPUUpdaterDelegate, SPUStandardUserDriverDelegate {
     static let shared = AppUpdater()
-    private let driver = UpdateUserDriver(hostBundle: .main, delegate: nil)
+    private lazy var driver = UpdateUserDriver(hostBundle: .main, delegate: self)
     private lazy var updater = SPUUpdater(hostBundle: .main, applicationBundle: .main,
                                          userDriver: driver, delegate: self)
     private var startupError: Error?
@@ -59,7 +59,38 @@ final class AppUpdater: NSObject, NSMenuItemValidation, SPUUpdaterDelegate {
     private var retryWork: DispatchWorkItem?
     private var retryPanel: NSPanel?
     private var retryGeneration = 0
+    private(set) var isScheduledUpdatePending = false
     private(set) var isRelaunchingForUpdate = false
+
+    var supportsGentleScheduledUpdateReminders: Bool { true }
+
+    func standardUserDriverShouldHandleShowingScheduledUpdate(_ update: SUAppcastItem,
+                                                               andInImmediateFocus immediateFocus: Bool) -> Bool { false }
+
+    func standardUserDriverWillHandleShowingUpdate(_ handleShowingUpdate: Bool, forUpdate update: SUAppcastItem,
+                                                   state: SPUUserUpdateState) {
+        guard !handleShowingUpdate && !state.userInitiated else { return }
+        queueScheduledUpdate()
+    }
+
+    func queueScheduledUpdate() {
+        isScheduledUpdatePending = true
+        DispatchQueue.main.async { [weak self] in self?.presentPendingUpdateIfNeeded() }
+    }
+
+    func standardUserDriverDidReceiveUserAttention(forUpdate update: SUAppcastItem) {
+        isScheduledUpdatePending = false
+    }
+
+    func standardUserDriverWillFinishUpdateSession() {
+        isScheduledUpdatePending = false
+    }
+
+    func presentPendingUpdateIfNeeded() {
+        guard isScheduledUpdatePending, NSApp.isActive, updater.canCheckForUpdates else { return }
+        isScheduledUpdatePending = false
+        updater.checkForUpdates()
+    }
 
     func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
         isRelaunchingForUpdate = true
