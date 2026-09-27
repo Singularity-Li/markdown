@@ -1,0 +1,19 @@
+{
+  "name": "markdown-rich-editor",
+  "version": "1.0.0",
+  "description": "Offline visual Markdown editor embedded in the macOS app",
+  "scripts": {
+    "build": "mkdir -p ../dist && esbuild src/editor.js --bundle --minify --format=iife --outdir=../Resources --entry-names=editor --metafile=../dist/editor-meta.json && python3 ../scripts/build_web_licenses.py"
+  },
+  "keywords": [],
+  "author": "",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@milkdown/crepe": "7.22.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
+}

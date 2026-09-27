@@ -34,6 +34,11 @@ SPARKLE_ROOT="$ROOT/.build/artifacts/sparkle/Sparkle"
 
 echo "==> 1/6 生成内嵌资源 (Assets.swift)"
 swift scripts/gen_assets.swift
+echo "==> 构建离线可视化编辑器"
+if [ ! -d "$ROOT/web/node_modules" ]; then
+  (cd "$ROOT/web" && npm ci)
+fi
+(cd "$ROOT/web" && npm run build)
 
 echo "==> 2/6 编译 (release, arm64)"
 swift build -c release --arch arm64
@@ -57,6 +62,7 @@ done
 cp "$SPARKLE_ROOT/LICENSE" "$REPO_APP/Contents/Resources/Sparkle-LICENSE.txt"
 cp "$ROOT/LICENSE" "$ROOT/THIRD_PARTY_NOTICES.md" "$REPO_APP/Contents/Resources/"
 cp -R "$ROOT/LICENSES" "$REPO_APP/Contents/Resources/LICENSES"
+cp "$ROOT/Resources/editor.js" "$ROOT/Resources/editor.css" "$REPO_APP/Contents/Resources/"
 
 cat > "$REPO_APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

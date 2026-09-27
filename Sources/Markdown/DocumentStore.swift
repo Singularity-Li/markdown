@@ -15,6 +15,8 @@ final class OpenDocument: Identifiable {
     let isSupported: Bool
     @ObservationIgnored var viewportSourceOffset: Double = 0
     var isPreviewMode = true
+    /// The visual editor is the default; source mode keeps uncommon Markdown editable.
+    var isSourceMode = false
     var isDirty: Bool { isSupported && text != savedText }
 
     init(url: URL? = nil, text: String, isSupported: Bool = true, untitledName: String = "未命名.md") {
@@ -24,6 +26,9 @@ final class OpenDocument: Identifiable {
         self.isSupported = isSupported
         self.text = text
         self.savedText = text
+        // Raw HTML can carry details that a structured Markdown editor cannot round-trip.
+        self.isSourceMode = text.range(of: #"(?m)<!--|</?[A-Za-z][^>]*>"#,
+                                       options: .regularExpression) != nil
     }
 }
 

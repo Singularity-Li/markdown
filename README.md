@@ -19,7 +19,8 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 打开一份笔记，读一篇长文，或修改项目文档。Markdown 将本地文件、清晰的排版和原生 macOS 交互放在一起，无需注册账号。
 
 - **原生玻璃界面** — Liquid Glass 背景、可调透明度，跟随系统明暗外观；紧凑工具栏为正文留出空间。
-- **阅读与编辑，随时切换** — 排版预览与 Markdown 源码高亮；切换模式时尽量保留阅读位置，键盘焦点自动进入正文。
+- **阅读与编辑，随时切换** — 默认用可视化文档编辑器，标题、列表、表格、图片和代码块直接排版；需要时可切换到 Markdown 源码。切换预览时尽量保留阅读位置。
+- **输入 `/` 快速插入** — 在编辑区输入斜线，按文字与标题、列表与任务、插入内容、行内格式分组选择；继续输入可搜索，支持键盘选择。
 - **多文档，一处管理** — 标签页、文件多选、批量拖放与文件夹侧栏；每份文档独立保留模式和未保存状态。
 - **常用 Markdown 开箱即用** — 表格、任务列表、代码高亮、图片、引用与标题锚点；支持自定义 HTML 锚点和相对路径图片。
 - **本地文件，自由掌握** — 直接读写纯文本，无专有格式；渲染器内置，阅读本地文本无需联网。正文实时显示字符数和行数。
@@ -31,11 +32,11 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 
 ![Markdown 阅读模式：Swift 与 Python 代码高亮](docs/images/preview.png)
 
-**编辑模式** · Markdown 源码高亮与即时切换
+**源码编辑** · 可视化编辑器右侧工具栏按钮可切换到源码；下图展示源码视图
 
 ![Markdown 编辑模式：同一文档的源码视图](docs/images/editor.png)
 
-<sub>两张图片分别展示示例文档的阅读与编辑模式；点击图片可查看原始分辨率。</sub>
+<sub>示例文档含原始 HTML，因此默认使用源码编辑以保留其写法；点击图片可查看原始分辨率。</sub>
 
 ## 下载与开始
 
@@ -57,13 +58,13 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT 开源
 
 ## 支持范围
 
-预览使用 Marked 的 GitHub Flavored Markdown 模式，代码高亮由 highlight.js 提供。源码中对公式、脚注等标记的高亮，不代表预览支持公式排版或脚注扩展；目前不包含 PDF 导出、云同步或协同编辑。界面目前以中文为主。
+预览使用 Marked 的 GitHub Flavored Markdown 模式，代码高亮由 highlight.js 提供。可视化编辑器支持常见 Markdown 块和行内格式；插入本地图片前需先保存文档，图片会复制到文档旁的 `assets/` 文件夹。可视化编辑会规范化 Markdown 的标记与空行写法；含原始 HTML 的文档默认进入源码编辑，以免改写不能往返转换的内容。源码中对公式、脚注等标记的高亮，不代表预览支持公式排版或脚注扩展；目前不包含 PDF 导出、云同步或协同编辑。界面目前以中文为主。
 
 渲染器可以离线工作，但远程图片及内嵌远程内容会连接相应站点，更新检查会连接 GitHub。应用不要求账号，项目未接入使用行为分析服务。请仅预览可信文档，详见 [隐私与安全说明](SECURITY.md)。
 
 ## 从源码构建
 
-准备 macOS 26+、Apple Silicon 和包含 macOS 26 SDK / Swift 6.2 的 Xcode 工具链，首次解析依赖需要联网：
+准备 macOS 26+、Apple Silicon、Node.js/npm 和包含 macOS 26 SDK / Swift 6.2 的 Xcode 工具链，首次解析依赖需要联网：
 
 ```sh
 git clone https://github.com/Singularity-Li/markdown.git

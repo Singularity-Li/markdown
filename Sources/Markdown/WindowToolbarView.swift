@@ -31,6 +31,17 @@ struct WindowToolbarView: View {
             } else {
                 Spacer(minLength: 12)
             }
+            if let document = store.activeDocument, document.isSupported, !document.isPreviewMode {
+                Button { document.isSourceMode.toggle() } label: {
+                    Image(systemName: document.isSourceMode ? "text.alignleft" : "chevron.left.forwardslash.chevron.right")
+                        .font(.system(size: 15, weight: .medium))
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(CompactToolbarButtonStyle())
+                .foregroundStyle(document.isSourceMode ? AppTheme.accent : .primary)
+                .help(document.isSourceMode ? "切换到可视化编辑" : "切换到 Markdown 源码")
+                .accessibilityLabel(document.isSourceMode ? "切换到可视化编辑" : "切换到 Markdown 源码")
+            }
             Button { store.newDocument() } label: {
                 Image(systemName: "doc.badge.plus")
                     .font(.system(size: 16, weight: .medium))

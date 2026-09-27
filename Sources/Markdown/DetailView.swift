@@ -63,11 +63,18 @@ struct DetailView: View {
                                     .opacity(document.isPreviewMode ? 1 : 0)
                                     .allowsHitTesting(document.isPreviewMode)
                                     .accessibilityHidden(!document.isPreviewMode)
-                                EditorView(document: document,
-                                           isActive: document.id == store.activeID && !document.isPreviewMode)
-                                    .opacity(document.isPreviewMode ? 0 : 1)
-                                    .allowsHitTesting(!document.isPreviewMode)
-                                    .accessibilityHidden(document.isPreviewMode)
+                                Group {
+                                    if document.isSourceMode {
+                                        EditorView(document: document,
+                                                   isActive: document.id == store.activeID && !document.isPreviewMode)
+                                    } else {
+                                        RichEditorView(document: document,
+                                                       isActive: document.id == store.activeID && !document.isPreviewMode)
+                                    }
+                                }
+                                .opacity(document.isPreviewMode ? 0 : 1)
+                                .allowsHitTesting(!document.isPreviewMode)
+                                .accessibilityHidden(document.isPreviewMode)
                             }
                         }
                     }

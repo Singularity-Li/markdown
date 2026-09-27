@@ -155,6 +155,8 @@ check(!drafts.close(secondDraft.id) && drafts.documents.count == 2, "关闭时�
 drafts.chooseSaveURL = { _ in root.appendingPathComponent("关闭保存.md") }
 check(drafts.close(secondDraft.id) && drafts.documents.count == 1, "关闭未命名文档可保存后关闭")
 let counted = OpenDocument(text: "中 文 Hello 👨‍👩‍👧‍👦\n#")
+check(OpenDocument(text: "<div>HTML</div>").isSourceMode, "原始 HTML 默认进入源码编辑以保护语法")
+check(!OpenDocument(text: "# 标题\n\n- [ ] 任务").isSourceMode, "常见 Markdown 默认进入可视化编辑")
 check(counted.characterCount == 9, "字符统计兼容中英文及组合 emoji，忽略空白")
 counted.text = ""
 check(counted.characterCount == 0, "空文档字符数为零且随编辑更新")

@@ -24,13 +24,29 @@
 		<data>
 		uUImk6Qqckz8it4M+HfJDDwMqJo=
 		</data>
+		<key>Resources/LICENSES/remark-math-MIT.txt</key>
+		<data>
+		Ez6WPaBoOI2nCPmuiYs3pEBpPqU=
+		</data>
+		<key>Resources/LICENSES/web-editor.txt</key>
+		<data>
+		wBOF4Mn6mLLJg6ww8Y7nPcpLX+k=
+		</data>
 		<key>Resources/Sparkle-LICENSE.txt</key>
 		<data>
 		mOjbjtiy4MLeRUA1svgpagNeQGQ=
 		</data>
 		<key>Resources/THIRD_PARTY_NOTICES.md</key>
 		<data>
-		geAr7mbxDwpDOZKdZBVlpn9+BPA=
+		XtPJRgTFwHdA6gCyJS2ZqQZTjhA=
+		</data>
+		<key>Resources/editor.css</key>
+		<data>
+		0JpRk4KY0p3swHgGM4vBlvv0PKs=
+		</data>
+		<key>Resources/editor.js</key>
+		<data>
+		uLRRWsELhGSkfmuJC3C+gmqHpUc=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -79,6 +95,20 @@
 			jjo/gvWaYJWPVsoI9EVkfDKkcz3HymwsRvbriYRxq5w=
 			</data>
 		</dict>
+		<key>Resources/LICENSES/remark-math-MIT.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tMkHem/gO0A4diMCb03owFrYGfH4bn4K0yMJdrvz/ZA=
+			</data>
+		</dict>
+		<key>Resources/LICENSES/web-editor.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DcX8v0Gqo7DNMNwLD44ZDMT6+/aTJWF8XX+xhhgz5yY=
+			</data>
+		</dict>
 		<key>Resources/Sparkle-LICENSE.txt</key>
 		<dict>
 			<key>hash2</key>
@@ -90,7 +120,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LGAyLH85vdGkNxBlLc2EwJQZ99AGYVxh2JuvqvOTasU=
+			SicsvS3q8GVDqAPfn/pd/OQ3sb0+eepDk4AQbgXL7Lk=
+			</data>
+		</dict>
+		<key>Resources/editor.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qoMMV07xejxFzf0UmAVtAV8XK1mORhpJzADVrZrwWlc=
+			</data>
+		</dict>
+		<key>Resources/editor.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SpnKYpMV6rtLReWYJoyv1gUI28P4NIh0cQAZXJzTF1A=
 			</data>
 		</dict>
 	</dict>

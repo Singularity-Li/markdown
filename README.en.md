@@ -19,7 +19,8 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT licensed
 Read a note, review a long document, or edit a project README. Markdown brings local files, readable typography, and native macOS interactions together, without an account.
 
 - **Native glass interface** — Liquid Glass, adjustable background opacity, system light and dark appearance, and a compact toolbar.
-- **Read and edit** — Rendered preview and highlighted Markdown source, with approximate position preservation between modes and automatic keyboard focus.
+- **Read and edit** — A visual document editor renders headings, lists, tables, images, and code blocks while you edit. Switch to highlighted Markdown source when needed. Preview switching approximately preserves your position.
+- **Insert with `/`** — Type a slash in the editor to choose from grouped text, list, task, insertion, and inline formatting commands. Keep typing to search, or use the keyboard to select.
 - **Multiple documents** — Tabs, multi-file selection, batch drag and drop, and folder navigation. Each document keeps its own mode and unsaved state.
 - **Everyday Markdown** — Tables, task lists, highlighted code, images, quotations, heading links, custom HTML anchors, and relative image paths.
 - **Your files stay yours** — Plain-text files, no proprietary format, and an embedded renderer that works offline for local text. Live character and line counts stay within reach.
@@ -31,11 +32,11 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 ![Markdown preview showing Swift and Python syntax highlighting](docs/images/preview.png)
 
-**Editor** · Highlighted Markdown source and quick mode switching
+**Source editor** · The toolbar button switches from visual editing to highlighted Markdown source; shown below
 
 ![Markdown source editor showing the same document](docs/images/editor.png)
 
-<sub>The images show the sample document in preview and edit modes. Open an image for its full resolution.</sub>
+<sub>The sample contains raw HTML, so it opens in source mode to preserve that syntax. Open an image for its full resolution.</sub>
 
 ## Get started
 
@@ -57,13 +58,13 @@ Use **Markdown → 检查更新…** to check for updates. See [release notes](h
 
 ## Scope and privacy
 
-Preview uses Marked in GitHub Flavored Markdown mode and highlight.js for code. Source highlighting for math or footnote syntax does not imply support for rendering those extensions. PDF export, cloud sync, and collaborative editing are not included. The app interface is currently primarily in Chinese.
+Preview uses Marked in GitHub Flavored Markdown mode and highlight.js for code. The visual editor supports common block and inline Markdown. Save a document before inserting a local image; it is copied into an adjacent `assets/` folder. Visual editing can normalize marker and blank-line styles, while documents with raw HTML open in source mode to preserve syntax that cannot round-trip. Source highlighting for math or footnote syntax does not imply support for rendering those extensions. PDF export, cloud sync, and collaborative editing are not included. The app interface is currently primarily in Chinese.
 
 Local text renders offline. Remote images and embedded remote content can contact their host sites; update checks contact GitHub. No account is required, and the project does not integrate usage analytics. Preview only trusted documents; see [security and privacy](SECURITY.md).
 
 ## Build from source
 
-Use macOS 26+, Apple Silicon, and an Xcode toolchain with the macOS 26 SDK and Swift 6.2. Initial dependency resolution requires network access.
+Use macOS 26+, Apple Silicon, Node.js/npm, and an Xcode toolchain with the macOS 26 SDK and Swift 6.2. Initial dependency resolution requires network access.
 
 ```sh
 git clone https://github.com/Singularity-Li/markdown.git

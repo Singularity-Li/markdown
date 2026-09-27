@@ -1,0 +1,45 @@
+:root { color-scheme: light dark; }
+html, body { margin: 0; background: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+#editor { max-width: 900px; margin: 0 auto; min-height: 100vh; }
+.milkdown {
+  --crepe-color-background: transparent;
+  --crepe-color-on-background: #222;
+  --crepe-color-surface: #fafafa;
+  --crepe-color-surface-low: #f2f2f2;
+  --crepe-color-on-surface: #222;
+  --crepe-color-on-surface-variant: #555;
+  --crepe-color-outline: #aaa;
+  --crepe-color-primary: #a63d50;
+  --crepe-color-secondary: #eee;
+  --crepe-color-on-secondary: #222;
+  --crepe-color-hover: #f1e8ea;
+  --crepe-color-selected: #eedde0;
+  --crepe-color-inline-area: #f4f4f4;
+  --crepe-font-title: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  --crepe-font-default: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  background: transparent !important;
+}
+.milkdown .ProseMirror { min-height: 100vh; padding: 24px 30px 70px; outline: none; caret-color: #a63d50; }
+.milkdown .ProseMirror ::selection { background: rgba(166, 61, 80, .25); }
+.milkdown .ProseMirror a { color: #0969da; }
+.milkdown .ProseMirror img { max-width: 100%; }
+.milkdown .crepe-slash-menu { max-height: min(60vh, 490px); overflow-y: auto; }
+@media (prefers-color-scheme: dark) {
+  .milkdown {
+    --crepe-color-background: transparent;
+    --crepe-color-on-background: #eee;
+    --crepe-color-surface: #292929;
+    --crepe-color-surface-low: #353535;
+    --crepe-color-on-surface: #eee;
+    --crepe-color-on-surface-variant: #bbb;
+    --crepe-color-outline: #777;
+    --crepe-color-primary: #a63d50;
+    --crepe-color-secondary: #3b3b3b;
+    --crepe-color-on-secondary: #eee;
+    --crepe-color-hover: #433237;
+    --crepe-color-selected: #50333a;
+    --crepe-color-inline-area: #353535;
+  }
+  .milkdown .ProseMirror a { color: #58a6ff; }
+}
