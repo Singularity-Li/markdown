@@ -31,6 +31,7 @@ final class PreviewCheck: NSObject, WKNavigationDelegate {
                 ['重复标题生成唯一锚点', headings[3].id === 'english-2'],
                 ['中英文链接均有目标', Array.from(content.querySelectorAll('a[href^="#"]')).every(a => document.getElementById(decodeURIComponent(a.hash.slice(1))))],
                 ['渲染无脚本错误', window.__mdErrors.length === 0]
+                ,['代码块提供复制按钮', content.querySelector('pre .code-copy-button') !== null]
             ];
         })()
         """) { result, error in
@@ -72,6 +73,10 @@ webView.loadHTMLString(MarkdownHTML.document(markdown: """
 [参考][reference]
 
 [reference]: https://example.com
+
+```swift
+let answer = 42
+```
 """ + (1...100).map { "\n\n## 位置 \($0)\n\n中文与 emoji 👋 正文 \($0)\n\n一段额外内容。" }.joined()), baseURL: URL(fileURLWithPath: NSTemporaryDirectory()))
 let deadline = Date().addingTimeInterval(20)
 while !checker.finished && Date() < deadline {

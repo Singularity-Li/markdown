@@ -31,17 +31,6 @@ struct WindowToolbarView: View {
             } else {
                 Spacer(minLength: 12)
             }
-            if let document = store.activeDocument, document.isSupported, !document.isPreviewMode {
-                Button { document.isSourceMode.toggle() } label: {
-                    Image(systemName: document.isSourceMode ? "text.alignleft" : "chevron.left.forwardslash.chevron.right")
-                        .font(.system(size: 15, weight: .medium))
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(CompactToolbarButtonStyle())
-                .foregroundStyle(document.isSourceMode ? AppTheme.accent : .primary)
-                .help(document.isSourceMode ? "切换到可视化编辑" : "切换到 Markdown 源码")
-                .accessibilityLabel(document.isSourceMode ? "切换到可视化编辑" : "切换到 Markdown 源码")
-            }
             Button { store.newDocument() } label: {
                 Image(systemName: "doc.badge.plus")
                     .font(.system(size: 16, weight: .medium))
@@ -104,9 +93,12 @@ struct WindowToolbarView: View {
             ReadingModeControl(isPreview: Binding(
                 get: { store.isPreviewMode },
                 set: { store.isPreviewMode = $0 }
+            ), isSource: Binding(
+                get: { store.activeDocument?.isSourceMode ?? false },
+                set: { store.activeDocument?.isSourceMode = $0 }
             ), isEnabled: store.activeDocument?.isSupported == true)
-            .frame(width: 104, height: AppTheme.toolbarControlHeight)
-            .help("切换编辑或预览模式（⌘⇧P）")
+            .frame(width: 174, height: AppTheme.toolbarControlHeight)
+            .help("切换源码、可视化或预览（⌘⇧P 切换预览）")
             .disabled(store.activeDocument?.isSupported != true)
             .accessibilityElement(children: .contain)
             .accessibilityLabel("阅读模式")

@@ -3,16 +3,17 @@ import SwiftUI
 /// 使用原生分段控件交互，并显式绘制品牌选中块。
 struct ReadingModeControl: NSViewRepresentable {
     @Binding var isPreview: Bool
+    @Binding var isSource: Bool
     let isEnabled: Bool
 
     func sizeThatFits(_ proposal: ProposedViewSize, nsView: ModeSegmentedControl, context: Context) -> CGSize? {
-        CGSize(width: proposal.width ?? 104, height: AppTheme.toolbarControlHeight)
+        CGSize(width: proposal.width ?? 174, height: AppTheme.toolbarControlHeight)
     }
 
-    func makeCoordinator() -> Coordinator { Coordinator(selection: $isPreview) }
+    func makeCoordinator() -> Coordinator { Coordinator(preview: $isPreview, source: $isSource) }
 
     func makeNSView(context: Context) -> ModeSegmentedControl {
-        let control = ModeSegmentedControl(labels: ["编辑", "预览"], trackingMode: .selectOne,
+        let control = ModeSegmentedControl(labels: ["源码", "可视化", "预览"], trackingMode: .selectOne,
                                          target: context.coordinator, action: #selector(Coordinator.selectMode(_:)))
         control.controlSize = .large
         control.segmentStyle = .rounded
@@ -21,18 +22,24 @@ struct ReadingModeControl: NSViewRepresentable {
     }
 
     func updateNSView(_ control: ModeSegmentedControl, context: Context) {
-        context.coordinator.selection = $isPreview
-        control.setModeSelection(isPreview ? 1 : 0,
+        context.coordinator.preview = $isPreview
+        context.coordinator.source = $isSource
+        control.setModeSelection(isPreview ? 2 : (isSource ? 0 : 1),
                                  animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
         control.isEnabled = isEnabled
         control.needsDisplay = true
     }
 
     final class Coordinator: NSObject {
-        var selection: Binding<Bool>
-        init(selection: Binding<Bool>) { self.selection = selection }
+        var preview: Binding<Bool>
+        var source: Binding<Bool>
+        init(preview: Binding<Bool>, source: Binding<Bool>) {
+            self.preview = preview
+            self.source = source
+        }
         @objc func selectMode(_ sender: NSSegmentedControl) {
-            selection.wrappedValue = sender.selectedSegment == 1
+            if sender.selectedSegment != 2 { source.wrappedValue = sender.selectedSegment == 0 }
+            preview.wrappedValue = sender.selectedSegment == 2
         }
     }
 }

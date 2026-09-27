@@ -8,11 +8,13 @@ final class Bridge: NSObject, WKScriptMessageHandler {
     var ready = false
     var error: String?
     var changes: [String] = []
+    var copied: [String: String]?
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         switch message.name {
         case "ready": ready = true
         case "error": error = String(describing: message.body)
         case "markdownChanged": if let text = message.body as? String { changes.append(text) }
+        case "copyCode": copied = message.body as? [String: String]
         default: break
         }
     }
@@ -20,7 +22,7 @@ final class Bridge: NSObject, WKScriptMessageHandler {
 
 let bridge = Bridge()
 let configuration = WKWebViewConfiguration()
-for name in ["ready", "error", "markdownChanged", "viewport", "imageUpload"] {
+for name in ["ready", "error", "markdownChanged", "viewport", "imageUpload", "copyCode"] {
     configuration.userContentController.add(bridge, name: name)
 }
 let web = WKWebView(frame: NSRect(x: 0, y: 0, width: 800, height: 650), configuration: configuration)
@@ -80,6 +82,15 @@ _ = evaluate("document.execCommand('insertText', false, '代码')")
 check(until({ (evaluate("document.body.innerText.includes('代码块')") as? Bool) == true }, seconds: 2), "输入中文可筛选斜线命令")
 _ = evaluate("(function(){ var el=Array.from(document.querySelectorAll('.milkdown-slash-menu li')).find(el => el.textContent.trim() === '代码块'); el?.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true})); el?.dispatchEvent(new PointerEvent('pointerup', {bubbles:true})); })()")
 check(until({ bridge.changes.last?.contains("```") == true }, seconds: 2), "斜线命令插入可保存的代码块")
+check((evaluate("document.querySelector('.milkdown-code-block .code-theme-button') !== null") as? Bool) == true, "代码块有深浅切换按钮")
+_ = evaluate("document.querySelector('.milkdown-code-block .code-theme-button').click()")
+check((evaluate("document.querySelector('.milkdown-code-block').dataset.codeTheme") as? String) == "dark", "代码块可切换深色")
+check((evaluate("getComputedStyle(document.querySelector('.milkdown-code-block .cm-editor')).backgroundColor") as? String) == "rgb(31, 35, 41)", "代码区深色背景生效")
+_ = evaluate("document.querySelector('.milkdown-code-block .code-theme-button').click()")
+check((evaluate("document.querySelector('.milkdown-code-block').dataset.codeTheme") as? String) == "light", "代码块可切回浅色")
+_ = evaluate("document.querySelector('.milkdown-code-block .copy-button').click()")
+check(until({ bridge.copied != nil }), "代码块复制发送到原生剪贴板")
+check(bridge.copied?["html"]?.contains("<pre") == true, "代码块复制同时包含纯文本和富文本")
 web.appearance = NSAppearance(named: .darkAqua)
 check(until({ (evaluate("matchMedia('(prefers-color-scheme: dark)').matches") as? Bool) == true }, seconds: 2), "编辑区跟随系统深色外观")
 check((evaluate("getComputedStyle(document.querySelector('.milkdown')).getPropertyValue('--crepe-color-on-surface').trim()") as? String) == "#eee", "深色外观文字保持可读")
@@ -88,6 +99,18 @@ bridge.ready = false
 bridge.changes.removeAll()
 web.loadHTMLString(html.replacingOccurrences(of: encoded, with: ""), baseURL: nil)
 check(until({ bridge.ready }), "空白可视化文档启动")
+_ = evaluate("(function(){ var p=document.querySelector('.ProseMirror > p:last-child'); var r=document.createRange(); r.selectNodeContents(p); r.collapse(true); var s=getSelection(); s.removeAllRanges(); s.addRange(r); document.querySelector('.ProseMirror').focus(); return document.execCommand('insertText',false,'/dmk'); })()")
+check(until({ (evaluate("Array.from(document.querySelectorAll('.milkdown-slash-menu .menu-groups li')).some(n => n.textContent.trim() === '代码块')") as? Bool) == true }, seconds: 2), "代码块拼音首字母可筛选且菜单仍显示中文")
+_ = evaluate("(function(){ for (var i=0;i<3;i++) document.execCommand('delete'); return document.execCommand('insertText', false, 'daimakuai'); })()")
+check(until({ (evaluate("Array.from(document.querySelectorAll('.milkdown-slash-menu .menu-groups li')).some(n => n.textContent.trim() === '代码块')") as? Bool) == true }, seconds: 2), "代码块完整拼音可筛选")
+_ = evaluate("window.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowDown', bubbles:true}))")
+_ = evaluate("window.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowUp', bubbles:true}))")
+_ = evaluate("window.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', bubbles:true}))")
+check(until({ bridge.changes.last?.contains("```") == true }, seconds: 2), "拼音筛选后可回车插入代码块")
+bridge.ready = false
+bridge.changes.removeAll()
+web.loadHTMLString(html.replacingOccurrences(of: encoded, with: ""), baseURL: nil)
+check(until({ bridge.ready }), "行内格式测试文档启动")
 _ = evaluate("(function(){ var p=document.querySelector('.ProseMirror > p:last-child'); var r=document.createRange(); r.selectNodeContents(p); r.collapse(true); var s=getSelection(); s.removeAllRanges(); s.addRange(r); document.querySelector('.ProseMirror').focus(); return document.execCommand('insertText',false,'/'); })()")
 check(until({ (evaluate("document.querySelector('.milkdown-slash-menu')?.getAttribute('data-show') === 'true'") as? Bool) == true }, seconds: 2), "空白文档斜线菜单打开")
 _ = evaluate("(function(){ var el=Array.from(document.querySelectorAll('.milkdown-slash-menu .menu-groups li')).find(el => el.querySelector('span:last-child')?.textContent === '加粗'); el?.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true})); el?.dispatchEvent(new PointerEvent('pointerup', {bubbles:true})); return document.execCommand('insertText',false,'文字'); })()")

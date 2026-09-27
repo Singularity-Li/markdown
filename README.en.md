@@ -19,8 +19,9 @@ macOS 26+ · Apple Silicon · Swift / SwiftUI · MIT licensed
 Read a note, review a long document, or edit a project README. Markdown brings local files, readable typography, and native macOS interactions together, without an account.
 
 - **Native glass interface** — Liquid Glass, adjustable background opacity, system light and dark appearance, and a compact toolbar.
-- **Read and edit** — A visual document editor renders headings, lists, tables, images, and code blocks while you edit. Switch to highlighted Markdown source when needed. Preview switching approximately preserves your position.
-- **Insert with `/`** — Type a slash in the editor to choose from grouped text, list, task, insertion, and inline formatting commands. Keep typing to search, or use the keyboard to select.
+- **Read and edit** — The toolbar offers Source, Visual, and Preview modes. The visual editor renders headings, lists, tables, images, and code blocks while you edit. Preview switching approximately preserves your position.
+- **Insert with `/`** — Type a slash in the visual editor to choose grouped commands. Search by Chinese name, pinyin, or pinyin initials, then select with arrow keys and Enter.
+- **Code block tools** — Switch individual visual editor code blocks between light and dark. Copy highlighted rich text from code blocks in the visual editor or preview, with plain text also available to paste targets.
 - **Multiple documents** — Tabs, multi-file selection, batch drag and drop, and folder navigation. Each document keeps its own mode and unsaved state.
 - **Everyday Markdown** — Tables, task lists, highlighted code, images, quotations, heading links, custom HTML anchors, and relative image paths.
 - **Your files stay yours** — Plain-text files, no proprietary format, and an embedded renderer that works offline for local text. Live character and line counts stay within reach.
@@ -32,7 +33,7 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 
 ![Markdown preview showing Swift and Python syntax highlighting](docs/images/preview.png)
 
-**Source editor** · The toolbar button switches from visual editing to highlighted Markdown source; shown below
+**Source editor** · Choose Source in the toolbar to edit highlighted Markdown; shown below
 
 ![Markdown source editor showing the same document](docs/images/editor.png)
 

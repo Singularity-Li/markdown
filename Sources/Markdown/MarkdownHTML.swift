@@ -33,6 +33,7 @@ enum MarkdownHTML {
         </script>
         <script>\(Assets.markedJS)</script>
         <script>\(Assets.highlightJS)</script>
+        <script>\(Assets.codeCopyJS)</script>
         <script>
         (function () {
             function b64ToUtf8(b64) {
@@ -82,6 +83,23 @@ enum MarkdownHTML {
                 try {
                     document.querySelectorAll('pre code').forEach(function (b) { hljs.highlightElement(b); });
                 } catch (e2) { window.__mdErrors.push('hljs: ' + e2); }
+                el.querySelectorAll('pre > code').forEach(function(code) {
+                    var pre = code.parentElement;
+                    var button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'code-copy-button';
+                    button.title = '复制带格式代码';
+                    button.setAttribute('aria-label', '复制带格式代码');
+                    button.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>';
+                    button.addEventListener('click', function() {
+                        var language = Array.from(code.classList).find(function(name) { return name.startsWith('language-'); });
+                        window.copyFormattedCode(code.textContent, language ? language.slice(9) : '');
+                        button.setAttribute('aria-label', '已复制带格式代码');
+                        button.title = '已复制';
+                        setTimeout(function() { button.title = '复制带格式代码'; button.setAttribute('aria-label', button.title); }, 1500);
+                    });
+                    pre.appendChild(button);
+                });
                 var blocks = Array.from(el.children).filter(function(node) { return node.dataset.sourceStart !== undefined; });
                 window.mdSourceOffset = function() {
                     var node = blocks.find(function(n) { return n.getBoundingClientRect().bottom > 0; }) || blocks[blocks.length - 1];

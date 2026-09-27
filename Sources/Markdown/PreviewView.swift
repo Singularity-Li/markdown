@@ -11,6 +11,7 @@ struct PreviewView: NSViewRepresentable {
     func makeNSView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.userContentController.add(context.coordinator, name: "viewport")
+        configuration.userContentController.add(context.coordinator, name: "copyCode")
         configuration.setURLSchemeHandler(context.coordinator.images, forURLScheme: "md-image")
         let webView = FocusedMarkdownWebView(frame: .zero, configuration: configuration)
         webView.setValue(false, forKey: "drawsBackground")
@@ -45,6 +46,7 @@ struct PreviewView: NSViewRepresentable {
 
     static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
         webView.configuration.userContentController.removeScriptMessageHandler(forName: "viewport")
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "copyCode")
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
@@ -54,6 +56,7 @@ struct PreviewView: NSViewRepresentable {
         init(document: OpenDocument) { self.document = document }
 
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            if message.name == "copyCode" { CodeClipboard.copy(message.body); return }
             guard isActive, loaded, let value = message.body as? Double, value.isFinite else { return }
             document.viewportSourceOffset = max(0, min(Double((document.text as NSString).length), value))
         }

@@ -45,7 +45,7 @@ struct RichEditorView: NSViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
-        static let messageNames = ["markdownChanged", "viewport", "imageUpload", "ready", "error"]
+        static let messageNames = ["markdownChanged", "viewport", "imageUpload", "copyCode", "ready", "error"]
         let document: OpenDocument
         let images = LocalImageHandler()
         var key = ""
@@ -78,6 +78,8 @@ struct RichEditorView: NSViewRepresentable {
                 document.viewportSourceOffset = max(0, min(Double((document.text as NSString).length), value.doubleValue))
             case "imageUpload":
                 uploadImage(message.body, in: message.webView)
+            case "copyCode":
+                CodeClipboard.copy(message.body)
             case "ready":
                 ready = true
                 if active {
@@ -152,6 +154,7 @@ enum RichEditorHTML {
         <!doctype html><html><head><meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <style>\(css)</style></head><body><div id="editor"></div>
+        <script>\(Assets.highlightJS)</script>
         <script>\(javascript)</script><script>
         (function(){
           var bytes = Uint8Array.from(atob(\(base64.jsonQuoted)), function(c){ return c.charCodeAt(0); });

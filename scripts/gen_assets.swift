@@ -13,6 +13,7 @@ func read(_ name: String) throws -> String {
 let marked = try read("marked.min.js")
 let highlight = try read("highlight.min.js")
 let css = try read("style.css")
+let codeCopy = try String(contentsOf: root.appendingPathComponent("web/src/code-copy.js"), encoding: .utf8)
 
 let delim = "######"
 
@@ -32,6 +33,7 @@ file += "enum Assets {\n"
 file += "    static let markedJS = " + rawLiteral(marked) + "\n\n"
 file += "    static let highlightJS = " + rawLiteral(highlight) + "\n\n"
 file += "    static let styleCSS = " + rawLiteral(css) + "\n"
+file += "    static let codeCopyJS = " + rawLiteral(codeCopy) + "\n"
 file += "}\n"
 
 try file.write(to: out, atomically: true, encoding: .utf8)

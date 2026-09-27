@@ -25,6 +25,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif
 .milkdown .ProseMirror a { color: #0969da; }
 .milkdown .ProseMirror img { max-width: 100%; }
 .milkdown .crepe-slash-menu { max-height: min(60vh, 490px); overflow-y: auto; }
+.milkdown .milkdown-code-block { border-radius: 10px; }
+.milkdown .milkdown-code-block[data-code-theme="dark"] {
+  --crepe-color-surface: #1f2329;
+  --crepe-color-secondary: #343b45;
+  --crepe-color-on-surface: #eef0f3;
+  --crepe-color-on-surface-variant: #c9d0d8;
+  color: #eef0f3;
+}
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-editor,
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-content { color: #eef0f3; }
+.milkdown .milkdown-code-block[data-code-theme="dark"] .cm-cursor { border-left-color: #a63d50; }
+.milkdown .milkdown-code-block[data-code-theme="light"] {
+  --crepe-color-surface: #f6f8fa;
+  --crepe-color-secondary: #e8ebef;
+  --crepe-color-on-surface: #24292f;
+  --crepe-color-on-surface-variant: #57606a;
+  color: #24292f;
+}
+.milkdown .milkdown-code-block .code-theme-button { opacity: .75 !important; width: 28px; padding: 4px !important; }
+.milkdown .milkdown-code-block .code-theme-button:hover { opacity: 1 !important; }
 @media (prefers-color-scheme: dark) {
   .milkdown {
     --crepe-color-background: transparent;
