@@ -86,7 +86,71 @@ struct DetailView: View {
                 }
             }
         } else {
-            placeholder
+            if store.folderRoot == nil && !store.recentFiles.isEmpty {
+                recentFiles
+            } else {
+                placeholder
+            }
+        }
+    }
+
+    private var recentFiles: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("最近打开")
+                    .font(.title2.weight(.semibold))
+                VStack(spacing: 6) {
+                    ForEach(store.recentFiles) { file in
+                        HStack(spacing: 8) {
+                            Button { store.handleOpen(file.url) } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "doc.text")
+                                        .font(.system(size: 17))
+                                        .foregroundStyle(.secondary)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(file.url.lastPathComponent)
+                                            .font(.callout.weight(.medium))
+                                            .foregroundStyle(.primary)
+                                            .lineLimit(1)
+                                            .truncationMode(.middle)
+                                        Text(file.url.deletingLastPathComponent().path)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(1)
+                                            .truncationMode(.middle)
+                                    }
+                                    Spacer(minLength: 8)
+                                    Text(file.lastOpened.formatted(date: .abbreviated, time: .shortened))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .monospacedDigit()
+                                        .lineLimit(1)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .help("打开 \(file.url.lastPathComponent)")
+                            Button { store.removeRecentFile(file.url) } label: {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 28, height: 28)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .help("从最近记录移除，不删除文件")
+                            .accessibilityLabel("从最近记录移除 \(file.url.lastPathComponent)")
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+            }
+            .frame(maxWidth: 640)
+            .padding(28)
+            .frame(maxWidth: .infinity)
         }
     }
 

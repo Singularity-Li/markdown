@@ -22,7 +22,7 @@ Read a note, review a long document, or edit a project README. Markdown brings l
 - **Read and edit** — The toolbar offers Source, Visual, and Preview modes. The visual editor renders headings, lists, tables, images, and code blocks while you edit. Preview switching approximately preserves your position.
 - **Insert with `/`** — Type a slash in the visual editor for grouped commands. Search by Chinese name or pinyin, switch groups with Tab, and choose with arrow keys and Enter.
 - **Code block tools** — Switch individual visual editor code blocks between light and dark. Copy highlighted rich text from code blocks in the visual editor or preview, with plain text also available to paste targets.
-- **Multiple documents** — Tabs, multi-file selection, batch drag and drop, and folder navigation. Each document keeps its own mode and unsaved state.
+- **Multiple documents** — Tabs, multi-file selection, batch drag and drop, and folder navigation. The empty home view offers recently opened files, and each document keeps its own mode and unsaved state.
 - **Everyday Markdown** — Tables, task lists, highlighted code, images, quotations, heading links, custom HTML anchors, and relative image paths.
 - **Your files stay yours** — Plain-text files, no proprietary format, and an embedded renderer that works offline for local text. Live character and line counts stay within reach.
 - **Save protection and updates** — Save prompts before closing or quitting, signed updates through Sparkle, and restoration of recorded file tabs after an update restart.

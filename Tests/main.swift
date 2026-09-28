@@ -12,6 +12,48 @@ let file = root.appendingPathComponent("中文.md")
 let next = root.appendingPathComponent("next.md")
 try "# 原文".write(to: file, atomically: true, encoding: .utf8)
 try "# 下一篇".write(to: next, atomically: true, encoding: .utf8)
+let recentSuite = "MarkdownRecentTests-" + UUID().uuidString
+let recentDefaults = UserDefaults(suiteName: recentSuite)!
+defer { recentDefaults.removePersistentDomain(forName: recentSuite) }
+let recentStore = DocumentStore(defaults: recentDefaults)
+check(recentStore.recentFiles.isEmpty, "首次启动没有最近记录")
+recentStore.openFile(file)
+recentStore.openFile(next)
+recentStore.openFile(file)
+check(recentStore.recentFiles.map(\.url) == [file, next] &&
+      abs(recentStore.recentFiles[0].lastOpened.timeIntervalSinceNow) < 10,
+      "重复打开更新排序和上次打开时间")
+let recentUnsupported = root.appendingPathComponent("recent-image.png")
+try Data([0]).write(to: recentUnsupported)
+recentStore.openFile(recentUnsupported)
+check(recentStore.recentFiles.count == 2, "不支持格式不加入最近记录")
+let missingRecent = root.appendingPathComponent("recent-missing.md")
+recentStore.openFile(missingRecent)
+check(recentStore.recentFiles.count == 2, "打开失败不加入最近记录")
+for index in 0..<11 {
+    let url = root.appendingPathComponent("recent-\(index).md")
+    try "# \(index)".write(to: url, atomically: true, encoding: .utf8)
+    recentStore.openFile(url)
+}
+check(recentStore.recentFiles.count == 10 &&
+      recentStore.recentFiles.first?.url.lastPathComponent == "recent-10.md" &&
+      !recentStore.recentFiles.contains(where: { $0.url == file }), "最近记录最多保留十个")
+let removedRecent = recentStore.recentFiles[0].url
+recentStore.removeRecentFile(removedRecent)
+check(!recentStore.recentFiles.contains(where: { $0.url == removedRecent }) &&
+      FileManager.default.fileExists(atPath: removedRecent.path), "移除最近记录不删除磁盘文件")
+check(DocumentStore(defaults: recentDefaults).recentFiles.map(\.url) == recentStore.recentFiles.map(\.url),
+      "重启后恢复最近记录及删除结果")
+let recentDraft = recentStore.newDocument()
+let recentSaved = root.appendingPathComponent("recent-saved.md")
+recentStore.chooseSaveURL = { _ in recentSaved }
+check(recentStore.save(recentDraft) && recentStore.recentFiles.first?.url == recentSaved,
+      "新文档首次保存后加入最近记录")
+recentStore.openFile(file)
+recentStore.activate(recentDraft.id)
+recentStore.updateText("后续保存")
+check(recentStore.save() && recentStore.recentFiles.first?.url == file,
+      "后续保存不改写上次打开顺序")
 let store = DocumentStore()
 check(!store.showsSidebar && store.documents.isEmpty, "启动无标签且隐藏侧栏")
 let tabStore = DocumentStore()

@@ -34,6 +34,12 @@ final class OpenDocument: Identifiable {
 
 enum CloseDecision { case save, discard, cancel }
 
+struct RecentFile: Codable, Identifiable {
+    let url: URL
+    let lastOpened: Date
+    var id: URL { url }
+}
+
 private struct UpdateDocumentSession: Codable {
     struct Tab: Codable {
         let url: URL
@@ -48,6 +54,7 @@ private struct UpdateDocumentSession: Codable {
 @Observable
 final class DocumentStore {
     static let shared = DocumentStore()
+    private static let recentFilesKey = "recentMarkdownFiles"
 
     static var updateSessionURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -56,7 +63,9 @@ final class DocumentStore {
     }
 
     private(set) var documents: [OpenDocument] = []
+    private(set) var recentFiles: [RecentFile]
     private(set) var activeID: URL?
+    private let defaults: UserDefaults
     var chooseSaveURL: ((OpenDocument) -> URL?)?
     private var untitledCount = 0
     var confirmClose: ((OpenDocument) -> CloseDecision)?
@@ -67,6 +76,13 @@ final class DocumentStore {
     var isDropTargeted = false
     var folderRoot: URL?
     var folderTree: FileNode?
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        recentFiles = (defaults.data(forKey: Self.recentFilesKey)
+            .flatMap { try? JSONDecoder().decode([RecentFile].self, from: $0) } ?? [])
+            .filter { $0.url.isFileURL }
+    }
 
     var activeDocument: OpenDocument? { documents.first { $0.id == activeID } }
     var currentURL: URL? { activeDocument?.url }
@@ -135,6 +151,7 @@ final class DocumentStore {
         let canonical = url.standardizedFileURL.resolvingSymlinksInPath()
         if let document = documents.first(where: { $0.url == canonical }) {
             activate(document.id)
+            if document.isSupported { remember(canonical) }
             return true
         }
         guard ["md", "markdown", "mkd", "mdown"].contains(url.pathExtension.lowercased()) else {
@@ -153,6 +170,7 @@ final class DocumentStore {
             let document = OpenDocument(url: canonical, text: text)
             documents.append(document)
             activate(document.id)
+            remember(canonical)
             return true
         } catch {
             errorMessage = "无法打开“\(url.lastPathComponent)”：\(error.localizedDescription)"
@@ -200,6 +218,7 @@ final class DocumentStore {
     @discardableResult
     func save(_ document: OpenDocument) -> Bool {
         guard document.isSupported else { return false }
+        let isFirstSave = document.url == nil
         guard let destination = document.url ?? chooseSaveURL?(document) else { return false }
         let canonical = destination.standardizedFileURL.resolvingSymlinksInPath()
         guard !documents.contains(where: { $0.id != document.id && $0.url == canonical }) else {
@@ -211,6 +230,7 @@ final class DocumentStore {
             document.url = canonical
             if let folderRoot { folderTree = FileNode.scan(folderRoot) }
             document.savedText = document.text
+            if isFirstSave { remember(canonical) }
             return true
         } catch {
             errorMessage = "无法保存“\(document.displayName)”：\(error.localizedDescription)"
@@ -283,5 +303,19 @@ final class DocumentStore {
         case .discard: return true
         case .cancel: return false
         }
+    }
+
+    func removeRecentFile(_ url: URL) {
+        recentFiles.removeAll { $0.url == url }
+        persistRecentFiles()
+    }
+
+    private func remember(_ url: URL) {
+        recentFiles = Array(([RecentFile(url: url, lastOpened: Date())] + recentFiles.filter { $0.url != url }).prefix(10))
+        persistRecentFiles()
+    }
+
+    private func persistRecentFiles() {
+        defaults.set(try? JSONEncoder().encode(recentFiles), forKey: Self.recentFilesKey)
     }
 }
